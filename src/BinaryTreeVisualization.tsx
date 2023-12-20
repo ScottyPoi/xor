@@ -38,8 +38,8 @@ const BinaryTreeVisualization: React.FC = () => {
       }
     };
 
-    // Use an initial angle range of 90 degrees to spread out leaf nodes more with greater tree depth
-    const initialAngleRange = 90 / (depth - 1);
+    // Adjust the initial angle range so that it increases with the depth of the tree
+    const initialAngleRange = 20 + (depth -1) * 5;
     addChildren(root, 1, initialAngleRange);
     return root;
   };
