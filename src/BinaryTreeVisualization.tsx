@@ -15,9 +15,9 @@ interface ITreeNode {
 const BinaryTreeVisualization: React.FC = () => {
   const [depth, setDepth] = useState(1);
   const svgRef = useRef<SVGSVGElement>(null);
-  const width = 800; // Width of the visualization area
-  const height = 600; // Height of the visualization area
-  const rootNodePosition = { x: width / 2, y: height / 2 };
+  const width = 400 + depth * 80; // Width of the visualization area
+  const height = 200 + depth * 80; // Height of the visualization area
+  const rootNodePosition = { x: width / 2, y: height / 2 + 100 };
 
   const generateTreeData = (depth: number): ITreeNode => {
     const root: ITreeNode = { id: "root", ...rootNodePosition, angle: 0 };
@@ -28,7 +28,8 @@ const BinaryTreeVisualization: React.FC = () => {
       angleRange: number
     ) => {
       if (level < depth) {
-        const distance = ((level / (depth - 1)) * height) / 2; // Proportion of height
+        const e = depth / (4 + depth);
+        const distance = ((level ** e / (depth - 1) ** e) * width) / 2; // Proportion of height
         const baseAngle = node.angle!;
         node.children = [0, 1].map((i) => {
           const angle = baseAngle + ((i === 0 ? -1 : 1) * angleRange) / 2;
@@ -45,7 +46,7 @@ const BinaryTreeVisualization: React.FC = () => {
     };
 
     // Adjust the initial angle range so that it increases with the depth of the tree
-    const initialAngleRange = 45 + 120 ** ((depth - 1) ** (1/8) / 2**0.5);
+    const initialAngleRange = 45 + 120 ** ((depth - 1) ** (1 / 8) / 2 ** 0.5);
     addChildren(root, 1, initialAngleRange);
     return root;
   };
@@ -69,8 +70,19 @@ const BinaryTreeVisualization: React.FC = () => {
         .attr("y1", (d) => d.parent!.data.y!)
         .attr("x2", (d) => d.data.x!)
         .attr("y2", (d) => d.data.y!)
-        .style("stroke", "#ccc")
-        .style("stroke-width", 1.5);
+        // .style("stroke", "#000")
+        .style(
+          "stroke",
+          (d) =>
+            `${
+              d.data.id.slice(-1) === "R"
+                ? "#aaf"
+                : d.data.id.slice(-1) === "L"
+                ? "#faa"
+                : "#000"
+            }`
+        )
+        .style("stroke-width", 1);
 
       // Set positions for nodes
       const nodeEnter = svg
@@ -84,17 +96,28 @@ const BinaryTreeVisualization: React.FC = () => {
       // Create nodes as circles
       nodeEnter
         .append("circle")
-        .attr("r", 100 / 2 ** (depth - 1)) // Adjust based on depth if needed
-        .style("fill", "#fff")
-        .style("stroke", "#68a")
-        .style("stroke-width", 0.5);
+        .attr("r", 100 ** 0.95 / (2 ** (depth - 1)) ** 0.95) // Adjust based on depth if needed
+        .style(
+          "fill",
+          (d) =>
+            `${
+              d.data.id.slice(-1) === "R"
+                ? "#00f"
+                : d.data.id.slice(-1) === "L"
+                ? "#f00"
+                : "#000"
+            }`
+        )
+        .style("stroke", "none");
+      // .style("stroke", "#000")
+      // .style("stroke-width", 0.1);
 
       // Add text labels
       // nodeEnter
       //   .append("text")
       //   .attr("dy", ".35em")
       //   .style("text-anchor", "middle")
-      //   .text((d) => d.data.id);
+      //   .text((d) => d.data.id.slice(-1));
     }
   }, [depth]);
 
