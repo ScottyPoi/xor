@@ -9,6 +9,7 @@ interface ITreeNode {
   children?: ITreeNode[];
   x?: number;
   y?: number;
+  angle?: number;
 }
 
 const BinaryTreeVisualization: React.FC = () => {
@@ -18,31 +19,26 @@ const BinaryTreeVisualization: React.FC = () => {
   const height = 600; // Height of the visualization area
   const rootNodePosition = { x: width / 2, y: height / 2 };
 
-  const generateTreeData = (depth: number, numberOfLeaves: number): ITreeNode => {
-    const root: ITreeNode = { id: 'root', ...rootNodePosition };
+  const generateTreeData = (depth: number): ITreeNode => {
+    const root: ITreeNode = { id: 'root', ...rootNodePosition, angle: -90 };
 
-    const addChildren = (node: ITreeNode, level: number) => {
+    const addChildren = (node: ITreeNode, level: number, minAngle: number, maxAngle: number) => {
       if (level < depth) {
-        node.children = [0, 1].map((i) => {
-          const angleStep = 180 / numberOfLeaves;
-          const baseAngle = 90 + angleStep / 2;
-          const angle = (node.parent ? node.parent.x! - rootNodePosition.x : 0) + (180 - 2 * baseAngle) / 2 + i * angleStep;
-          const distance = 50 + (level / depth) * (height / 2 - 50); // Dynamic radius based on level and depth
-          const x = rootNodePosition.x + distance * Math.sin((angle * Math.PI) / 180);
-          const y = rootNodePosition.y + distance * Math.cos((angle * Math.PI) / 180);
-          const child: ITreeNode = {
-            id: `node-${i === 0 ? 'L' : 'R'}${node.id}`,
-            parent: node,
-            x,
-            y
-          };
-          addChildren(child, level + 1);
+        const range = maxAngle - minAngle;
+        node.children = [0, 1].map(i => {
+          const angle = minAngle + (i * range) / 2;
+          const radius = ((level / (depth - 1)) * height) / 3; // Proportion of height
+          const x = rootNodePosition.x + radius * Math.sin(angle * (Math.PI / 180));
+          const y = rootNodePosition.y - radius * Math.cos(angle * (Math.PI / 180));
+          const id = `${node.id}-${i === 0 ? 'L' : 'R'}`;
+          const child: ITreeNode = { id, parent: node, x, y, angle };
+          addChildren(child, level + 1, i === 0 ? minAngle : angle, i === 0 ? angle : maxAngle);
           return child;
         });
       }
     };
 
-    addChildren(root, 1);
+    addChildren(root, 1, -90, 90);
     return root;
   };
 
@@ -51,8 +47,7 @@ const BinaryTreeVisualization: React.FC = () => {
       const svg = d3.select(svgRef.current);
       svg.selectAll('*').remove(); // Clear SVG before new render
 
-      const numberOfLeaves = Math.pow(2, depth - 1);
-      const treeData = generateTreeData(depth, numberOfLeaves);
+      const treeData = generateTreeData(depth);
       const nodes = d3.hierarchy(treeData).descendants();
 
       // Set positions for links
@@ -67,7 +62,7 @@ const BinaryTreeVisualization: React.FC = () => {
         .style("stroke", "#ccc")
         .style("stroke-width", 1.5);
 
-      // Set positions for node groups
+      // Set positions for nodes
       const nodeEnter = svg.selectAll(".node")
         .data(nodes)
         .enter().append("g")
@@ -76,7 +71,7 @@ const BinaryTreeVisualization: React.FC = () => {
 
       // Create nodes as circles
       nodeEnter.append("circle")
-        .attr("r", 10) // You can calculate this value based on depth if needed
+        .attr("r", 10) // Adjust based on depth if needed
         .style("fill", "#fff")
         .style("stroke", "#68a")
         .style("stroke-width", 1.5);
