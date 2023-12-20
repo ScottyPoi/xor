@@ -20,25 +20,27 @@ const BinaryTreeVisualization: React.FC = () => {
   const rootNodePosition = { x: width / 2, y: height / 2 };
 
   const generateTreeData = (depth: number): ITreeNode => {
-    const root: ITreeNode = { id: 'root', ...rootNodePosition, angle: -90 };
+    const root: ITreeNode = { id: 'root', ...rootNodePosition, angle: 0 };
 
-    const addChildren = (node: ITreeNode, level: number, minAngle: number, maxAngle: number) => {
+    const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
       if (level < depth) {
-        const range = maxAngle - minAngle;
+        const distance = ((level / (depth - 1)) * height) / 2; // Proportion of height
+        const baseAngle = node.angle!;
         node.children = [0, 1].map(i => {
-          const angle = minAngle + (i * range) / 2;
-          const radius = ((level / (depth - 1)) * height) / 3; // Proportion of height
-          const x = rootNodePosition.x + radius * Math.sin(angle * (Math.PI / 180));
-          const y = rootNodePosition.y - radius * Math.cos(angle * (Math.PI / 180));
+          const angle = baseAngle + (i === 0 ? -1 : 1) * angleRange / 2;
+          const x = rootNodePosition.x + distance * Math.sin(angle * (Math.PI / 180));
+          const y = rootNodePosition.y - distance * Math.cos(angle * (Math.PI / 180));
           const id = `${node.id}-${i === 0 ? 'L' : 'R'}`;
           const child: ITreeNode = { id, parent: node, x, y, angle };
-          addChildren(child, level + 1, i === 0 ? minAngle : angle, i === 0 ? angle : maxAngle);
+          addChildren(child, level + 1, angleRange / 2);
           return child;
         });
       }
     };
 
-    addChildren(root, 1, -90, 90);
+    // Use an initial angle range of 90 degrees to spread out leaf nodes more with greater tree depth
+    const initialAngleRange = 90 / (depth - 1);
+    addChildren(root, 1, initialAngleRange);
     return root;
   };
 
@@ -55,8 +57,8 @@ const BinaryTreeVisualization: React.FC = () => {
         .data(nodes.slice(1)) // Exclude root
         .enter().append("line")
         .attr("class", "link")
-        .attr("x1", d => d.parent ? d.parent.data.x! : rootNodePosition.x)
-        .attr("y1", d => d.parent ? d.parent.data.y! : rootNodePosition.y)
+        .attr("x1", d => d.parent!.data.x!)
+        .attr("y1", d => d.parent!.data.y!)
         .attr("x2", d => d.data.x!)
         .attr("y2", d => d.data.y!)
         .style("stroke", "#ccc")
