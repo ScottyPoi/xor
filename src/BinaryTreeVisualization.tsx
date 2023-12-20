@@ -113,11 +113,36 @@ const BinaryTreeVisualization: React.FC = () => {
       // .style("stroke-width", 0.1);
 
       // Add text labels
-      // nodeEnter
-      //   .append("text")
-      //   .attr("dy", ".35em")
-      //   .style("text-anchor", "middle")
-      //   .text((d) => d.data.id.slice(-1));
+      nodeEnter
+        .append("text")
+        .attr("dy", ".35em")
+        .style("text-anchor", (d) =>
+          d.data.id[5] === "R"
+            ? "start"
+            : d.data.id[5] === "L"
+            ? "end"
+            : "middle"
+        )
+        .text((d) => {
+          const add = d.data.id
+            .replace("root-", "0x")
+            .replaceAll("L", "0")
+            .replaceAll("R", "1")
+            .replaceAll("-", "");
+          const nibble =
+            d.data.id.slice(-1) === "R"
+              ? "1"
+              : d.data.id.slice(-1) === "L"
+              ? "0"
+              : "0x";
+          return add.length === depth + 1 ? add : nibble;
+        });
+      // .text((d) => d.data.id.slice(-1) === "R"
+      // ? "1"
+      // : d.data.id.slice(-1) === "L"
+      // ? "0"
+      // : "0x"
+      // );
     }
   }, [depth]);
 
