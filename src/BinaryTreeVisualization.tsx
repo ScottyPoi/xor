@@ -70,7 +70,6 @@ const BinaryTreeVisualization: React.FC = () => {
         .attr("y1", (d) => d.parent!.data.y!)
         .attr("x2", (d) => d.data.x!)
         .attr("y2", (d) => d.data.y!)
-        // .style("stroke", "#000")
         .style(
           "stroke",
           (d) =>
@@ -109,8 +108,6 @@ const BinaryTreeVisualization: React.FC = () => {
             }`
         )
         .style("stroke", "none");
-      // .style("stroke", "#000")
-      // .style("stroke-width", 0.1);
 
       // Add text labels
       nodeEnter
@@ -137,12 +134,6 @@ const BinaryTreeVisualization: React.FC = () => {
               : "0x";
           return add.length === depth + 1 ? add : nibble;
         });
-      // .text((d) => d.data.id.slice(-1) === "R"
-      // ? "1"
-      // : d.data.id.slice(-1) === "L"
-      // ? "0"
-      // : "0x"
-      // );
     }
   }, [depth]);
 
