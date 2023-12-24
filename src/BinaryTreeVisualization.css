@@ -1,44 +1,52 @@
 /* filename: BinaryTreeVisualization.css */
+
 .binary-tree-container {
-    margin: 20px;
-  }
-  
-  .controls {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  .button {
-    background-color: #68a;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .button:hover {
-    background-color: #57f;
-  }
-  
-  .tree-svg {
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    overflow: visible;
-  }
-  
-  .link {
-    fill: none;
-  }
-  
-  .node circle {
-    fill: #fff;
-    stroke: #68a;
-    stroke-width: 1.5;
-  }
-  
-  .node text {
-    font: 12px sans-serif;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Vertically center */
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  background-color: #f9f9f9; /* Optional: Just for better contrast */
+}
+
+.controls {
+  position: fixed; /* Fixed position so that the controls stay in view */
+  margin-top: -50px; /* Adjust based on your visual preference */
+}
+
+.tree-svg {
+  overflow: visible; /* Ensure that the entire tree is visible */
+}
+
+
+.link {
+  /* Styles for the links (lines between nodes) */
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.node circle {
+  /* Styles for the node circles */
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  /* Styles for the text labels */
+  font: 10px sans-serif;
+}
+
+.button {
+  /* Styles for control buttons */
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #ccc;
+}
