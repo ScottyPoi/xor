@@ -1,0 +1,44 @@
+/* filename: BinaryTreeVisualization.css */
+.binary-tree-container {
+    margin: 20px;
+  }
+  
+  .controls {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .button {
+    background-color: #68a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .button:hover {
+    background-color: #57f;
+  }
+  
+  .tree-svg {
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    overflow: visible;
+  }
+  
+  .link {
+    fill: none;
+  }
+  
+  .node circle {
+    fill: #fff;
+    stroke: #68a;
+    stroke-width: 1.5;
+  }
+  
+  .node text {
+    font: 12px sans-serif;
+  }
