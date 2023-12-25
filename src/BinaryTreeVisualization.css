@@ -1,23 +1,49 @@
 /* filename: BinaryTreeVisualization.css */
 
-.binary-tree-container {
+.controls {
   display: flex;
-  justify-content: center;
-  align-items: center; /* Vertically center */
-  flex-direction: column;
-  height: 100vh; /* Full viewport height */
-  background-color: #f9f9f9; /* Optional: Just for better contrast */
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #eee;
+  padding: 10px;
+  z-index: 1000;
 }
 
-.controls {
-  position: fixed; /* Fixed position so that the controls stay in view */
-  margin-top: -50px; /* Adjust based on your visual preference */
+.tree-container {
+  margin-top: 50px; /* Space for the header */
+  height: calc(100vh - 50px); /* Full height minus header space */
+  overflow: auto; /* Enables scroll */
+  padding: 10px;
+  position: relative; /* For absolute positioning of tooltip */
 }
 
 .tree-svg {
-  overflow: visible; /* Ensure that the entire tree is visible */
+  display: block; /* Fix for scrolling on svg elements */
+  width: 100%;
+  height: auto;
 }
 
+.tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  pointer-events: none; /* So mouse events can go to svg elements below */
+  transform: translate(-50%, -100%); /* Position slightly above the cursor */
+  z-index: 10;
+}
+
+.button {
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.depth-input {
+  width: 60px;
+}
 
 .link {
   /* Styles for the links (lines between nodes) */

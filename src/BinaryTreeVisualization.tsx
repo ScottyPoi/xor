@@ -1,5 +1,5 @@
 // filename: BinaryTreeVisualization.tsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
 
@@ -16,8 +16,8 @@ const generateTreeData = (
   width: number,
   height: number
 ): ITreeNode => {
-  const rootNodePosition = { x: width / 2, y: (5 * height) / 8 };
-  const root: ITreeNode = { id: "root", ...rootNodePosition, angle: 0 };
+  const rootNodePosition = { x: (3 * width) / 4, y: (height * 7) / 8 };
+  const root: ITreeNode = { id: "0x", ...rootNodePosition, angle: 0 };
 
   const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
     if (level < depth) {
@@ -30,7 +30,7 @@ const generateTreeData = (
           rootNodePosition.x + distance * Math.sin((angle * Math.PI) / 180);
         const y =
           rootNodePosition.y - distance * Math.cos((angle * Math.PI) / 180);
-        const childId = `${node.id}-${i === 0 ? "L" : "R"}`;
+        const childId = `${node.id}${i === 0 ? "0" : "1"}`;
         const child: ITreeNode = { id: childId, x, y, angle };
         addChildren(child, level + 1, angleRange / 2);
         return child;
@@ -45,10 +45,28 @@ const generateTreeData = (
 
 const BinaryTreeVisualization: React.FC = () => {
   const [depth, setDepth] = useState(1);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    id: string;
+  } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const width = 400 + depth * 80;
-  const height = 200 + depth * 80;
+  const width = 960;
+  const height = 600;
   const treeData = generateTreeData(depth, width, height);
+
+  const handleDepthChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
+    setDepth(newDepth);
+  };
+
+  const handleMouseOver = (node: ITreeNode) => {
+    setTooltip({ x: node.x, y: node.y, id: node.id });
+  };
+
+  const handleMouseOut = () => {
+    setTooltip(null);
+  };
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
@@ -57,6 +75,7 @@ const BinaryTreeVisualization: React.FC = () => {
     const nodes = d3.hierarchy(treeData).descendants();
     const links = nodes.slice(1);
 
+    // Links
     svg
       .selectAll(".link")
       .data(links)
@@ -67,9 +86,10 @@ const BinaryTreeVisualization: React.FC = () => {
       .attr("y1", (d) => d.parent!.data.y)
       .attr("x2", (d) => d.data.x)
       .attr("y2", (d) => d.data.y)
-      .style("stroke", (d) => (d.data.id.endsWith("R") ? "#aaf" : "#faa"))
+      .style("stroke", (d) => (d.data.id.endsWith("1") ? "#aaf" : "#faa"))
       .style("stroke-width", 1);
 
+    // Nodes
     const nodeEnter = svg
       .selectAll(".node")
       .data(nodes)
@@ -78,13 +98,17 @@ const BinaryTreeVisualization: React.FC = () => {
       .attr("class", "node")
       .attr("transform", (d) => `translate(${d.data.x},${d.data.y})`);
 
+    // Circles
     nodeEnter
       .append("circle")
       .attr("r", 10)
-      .style("fill", (d) => (d.data.id.endsWith("R") ? "#00f" : "#f00"))
+      .style("fill", (d) => (d.data.id.endsWith("1") ? "#00f" : "#f00"))
       .style("stroke", "#fff")
-      .style("stroke-width", 1.5);
+      .style("stroke-width", 1.5)
+      .on("mouseover", (e, d) => handleMouseOver(d.data))
+      .on("mouseout", () => handleMouseOut());
 
+    // Text
     nodeEnter
       .append("text")
       .attr("dy", ".35em")
@@ -93,20 +117,35 @@ const BinaryTreeVisualization: React.FC = () => {
   }, [depth, treeData]);
 
   return (
-    <div className="binary-tree-container">
-      <div className="controls">
+    <div>
+      <header className="controls">
         <button className="button" onClick={() => setDepth(depth + 1)}>
           Increase Depth
         </button>
-        <span>Depth: {depth}</span>
         <button
           className="button"
           onClick={() => setDepth(Math.max(depth - 1, 1))}
         >
           Decrease Depth
         </button>
+        <span>Depth: {depth}</span>
+        <input
+          type="number"
+          value={depth}
+          onChange={handleDepthChange}
+          min={1}
+          max={16}
+          className="depth-input"
+        />
+      </header>
+      <div className="tree-container">
+        <svg ref={svgRef} width={width} height={height} className="tree-svg" />
+        {tooltip && (
+          <div className="tooltip" style={{ top: tooltip.y, left: tooltip.x }}>
+            {tooltip.id}
+          </div>
+        )}
       </div>
-      <svg ref={svgRef} width={width} height={height} className="tree-svg" />
     </div>
   );
 };
