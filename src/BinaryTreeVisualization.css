@@ -16,13 +16,15 @@
   height: calc(100vh - 50px); /* Full height minus header space */
   overflow: auto; /* Enables scroll */
   padding: 10px;
+  outline: 1px solid #F00;
+  border: 1px solid #000;
   position: relative; /* For absolute positioning of tooltip */
 }
 
 .tree-svg {
-  display: block; /* Fix for scrolling on svg elements */
-  width: 100%;
+  display: flexbox; /* Fix for scrolling on svg elements */
   height: auto;
+  border: 1px solid #0F0;
 }
 
 .tooltip {
