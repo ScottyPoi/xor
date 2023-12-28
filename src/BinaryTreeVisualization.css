@@ -24,7 +24,8 @@
 .tree-svg {
   display: flexbox; /* Fix for scrolling on svg elements */
   height: auto;
-  border: 1px solid #0F0;
+  outline: 1px solid #0FF;
+  padding: 10px
 }
 
 .tooltip {
@@ -34,8 +35,8 @@
   border: 1px solid #ccc;
   border-radius: 3px;
   pointer-events: none; /* So mouse events can go to svg elements below */
-  transform: translate(-50%, -100%); /* Position slightly above the cursor */
   z-index: 10;
+  font-size: xx-large;
 }
 
 .button {

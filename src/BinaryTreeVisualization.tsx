@@ -16,7 +16,7 @@ const generateTreeData = (
   width: number,
   height: number
 ): ITreeNode => {
-  const rootNodePosition = { x: (3 * width) / 4, y: (height * 7) / 8 };
+  const rootNodePosition = { x: width / 2, y: width / 2 };
   const root: ITreeNode = { id: "0x", ...rootNodePosition, angle: 0 };
 
   const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
@@ -51,9 +51,24 @@ const BinaryTreeVisualization: React.FC = () => {
     id: string;
   } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const width = 960;
-  const height = 600;
-  const treeData = generateTreeData(depth, width, height);
+  const width = (2 * window.outerWidth) / 3;
+  const height = window.outerHeight - 20;
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  useEffect(() => {
+    function handleResize() {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const treeData = generateTreeData(depth, width, height); // Dynamic dimensions based on viewport
 
   const handleDepthChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
@@ -141,7 +156,7 @@ const BinaryTreeVisualization: React.FC = () => {
       <div className="tree-container">
         <svg ref={svgRef} width={width} height={height} className="tree-svg" />
         {tooltip && (
-          <div className="tooltip" style={{ top: tooltip.y, left: tooltip.x }}>
+          <div className="tooltip" style={{ top: 50, left: 50 }}>
             {tooltip.id}
           </div>
         )}
