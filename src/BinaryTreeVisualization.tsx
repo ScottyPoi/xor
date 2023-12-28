@@ -20,24 +20,10 @@ const BinaryTreeVisualization: React.FC = () => {
     id: string;
   } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const width = (2 * window.outerWidth) / 3;
-  const height = window.outerHeight - 20;
   const [dimensions, setDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: (2 * window.outerWidth) / 3,
+    height: window.outerHeight - 20,
   });
-  useEffect(() => {
-    function handleResize() {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  const treeData = generateTreeData(depth, width, height); // Dynamic dimensions based on viewport
 
   const handleDepthChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
@@ -52,10 +38,23 @@ const BinaryTreeVisualization: React.FC = () => {
     setTooltip(null);
   };
 
+  const handleResize = () => {
+    setDimensions({
+      width: (2 * window.outerWidth) / 3,
+      height: window.outerHeight - 20,
+    });
+  };
+  
   useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const { width, height } = dimensions;
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
-
+    const treeData = generateTreeData(depth, width, height); // Dynamic dimensions based on viewport
     const nodes = d3.hierarchy(treeData).descendants();
     const links = nodes.slice(1);
 
@@ -98,7 +97,7 @@ const BinaryTreeVisualization: React.FC = () => {
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text((d) => (d.depth === depth ? d.data.id : ""));
-  }, [depth, treeData]);
+  }, [depth, dimensions]);
 
   return (
     <div>
@@ -123,7 +122,12 @@ const BinaryTreeVisualization: React.FC = () => {
         />
       </header>
       <div className="tree-container">
-        <svg ref={svgRef} width={width} height={height} className="tree-svg" />
+        <svg
+          ref={svgRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          className="tree-svg"
+        />
         {tooltip && (
           <div className="tooltip" style={{ top: 50, left: 50 }}>
             {tooltip.id}
