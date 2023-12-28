@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from "react";
 import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
+import { generateTreeData } from "./treeUtils";
 
 interface ITreeNode {
   id: string;
@@ -10,38 +11,6 @@ interface ITreeNode {
   angle: number;
   children?: ITreeNode[];
 }
-
-const generateTreeData = (
-  depth: number,
-  width: number,
-  height: number
-): ITreeNode => {
-  const rootNodePosition = { x: width / 2, y: width / 2 };
-  const root: ITreeNode = { id: "0x", ...rootNodePosition, angle: 0 };
-
-  const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
-    if (level < depth) {
-      const e = depth / (4 + depth);
-      const distance = ((level ** e / (depth - 1) ** e) * width) / 2;
-      const baseAngle = node.angle;
-      node.children = [0, 1].map((i) => {
-        const angle = baseAngle + ((i === 0 ? -1 : 1) * angleRange) / 2;
-        const x =
-          rootNodePosition.x + distance * Math.sin((angle * Math.PI) / 180);
-        const y =
-          rootNodePosition.y - distance * Math.cos((angle * Math.PI) / 180);
-        const childId = `${node.id}${i === 0 ? "0" : "1"}`;
-        const child: ITreeNode = { id: childId, x, y, angle };
-        addChildren(child, level + 1, angleRange / 2);
-        return child;
-      });
-    }
-  };
-
-  const initialAngleRange = 45 + 120 ** ((depth - 1) ** (1 / 8) / 2 ** 0.5);
-  addChildren(root, 1, initialAngleRange);
-  return root;
-};
 
 const BinaryTreeVisualization: React.FC = () => {
   const [depth, setDepth] = useState(1);
