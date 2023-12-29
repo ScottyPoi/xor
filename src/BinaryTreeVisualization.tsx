@@ -4,6 +4,13 @@ import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
 import { generateTreeData } from "./treeUtils";
 
+const padToEven = (hex: string) => {
+  if (hex.length % 2 === 0) {
+    return hex;
+  } else {
+    return "0" + hex;
+  }
+};
 interface ITreeNode {
   id: string;
   x: number;
@@ -14,6 +21,7 @@ interface ITreeNode {
 
 const BinaryTreeVisualization: React.FC = () => {
   const [depth, setDepth] = useState(1);
+  const [selected, setSelected] = useState("");
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -31,20 +39,28 @@ const BinaryTreeVisualization: React.FC = () => {
   };
 
   const handleMouseOver = (node: ITreeNode) => {
-    setTooltip({ x: node.x, y: node.y, id: node.id });
+    console.log("mouseover");
+    node.id.length === depth + 1
+      ? setTooltip({ x: node.x, y: node.y, id: node.id })
+      : setTooltip(null);
   };
 
   const handleMouseOut = () => {
+    console.log("mouseout");
     setTooltip(null);
+  };
+
+  const handleClick = (node: ITreeNode) => {
+    node.id.length === depth + 1 && setSelected(node.id);
   };
 
   const handleResize = () => {
     setDimensions({
       width: (2 * window.outerWidth) / 3,
-      height: window.outerHeight - 20,
+      height: window.innerHeight - 20,
     });
   };
-  
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -69,8 +85,17 @@ const BinaryTreeVisualization: React.FC = () => {
       .attr("y1", (d) => d.parent!.data.y)
       .attr("x2", (d) => d.data.x)
       .attr("y2", (d) => d.data.y)
-      .style("stroke", (d) => (d.data.id.endsWith("1") ? "#aaf" : "#faa"))
-      .style("stroke-width", 1);
+      .style("stroke", (d) =>
+        d.data.id.endsWith("1")
+          ? "#" +
+            Math.min(15, d.depth).toString(16) +
+            Math.min(15, d.depth).toString(16) +
+            "f"
+          : "#f" +
+            Math.min(15, d.depth).toString(16) +
+            Math.min(15, d.depth).toString(16)
+      )
+      .style("stroke-width", (d) => 10 - (3 * d.depth) / 4);
 
     // Nodes
     const nodeEnter = svg
@@ -84,12 +109,30 @@ const BinaryTreeVisualization: React.FC = () => {
     // Circles
     nodeEnter
       .append("circle")
-      .attr("r", 10)
-      .style("fill", (d) => (d.data.id.endsWith("1") ? "#00f" : "#f00"))
-      .style("stroke", "#fff")
-      .style("stroke-width", 1.5)
+      .attr("r", (d) =>
+        d.data.id === tooltip?.id
+          ? 16
+          : d.data.id === selected
+          ? 16
+          : Math.max(1, 16 - d.depth)
+      )
+      .style("fill", (d) =>
+        d.data.id === tooltip?.id
+          ? d.data.id.endsWith("1")
+            ? "#55f"
+            : "#f55"
+          : d.data.id === selected
+          ? d.data.id.endsWith("1")
+            ? "#00f"
+            : "#f00"
+          : d.data.id.endsWith("1")
+          ? "#99f"
+          : "#f99"
+      )
+      .style("stroke", (d) => (d.data.id === selected ? "#000" : "none"))
       .on("mouseover", (e, d) => handleMouseOver(d.data))
-      .on("mouseout", () => handleMouseOut());
+      .on("mouseout", () => handleMouseOut())
+      .on("mousedown", (e, d) => handleClick(d.data));
 
     // Text
     nodeEnter
@@ -97,7 +140,7 @@ const BinaryTreeVisualization: React.FC = () => {
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text((d) => (d.depth === depth ? d.data.id : ""));
-  }, [depth, dimensions]);
+  }, [depth, dimensions, tooltip]);
 
   return (
     <div>
@@ -120,6 +163,10 @@ const BinaryTreeVisualization: React.FC = () => {
           max={16}
           className="depth-input"
         />
+        <h3>
+          selected:{" "}
+          {"0x" + padToEven(parseInt(selected.slice(2), 2).toString(16))}
+        </h3>
       </header>
       <div className="tree-container">
         <svg
@@ -129,8 +176,33 @@ const BinaryTreeVisualization: React.FC = () => {
           className="tree-svg"
         />
         {tooltip && (
-          <div className="tooltip" style={{ top: 50, left: 50 }}>
-            {tooltip.id}
+          <div
+            className="tooltip"
+            style={
+              tooltip.id.startsWith("0x0")
+                ? {
+                    top:
+                      50 +
+                      (2 ** (depth - 2) -
+                        parseInt(tooltip.id.slice(2), 2) -
+                        1) *
+                        ((dimensions.height - 200) / 2 ** (depth - 2)),
+                    left: 50,
+                  }
+                : {
+                    top: Math.max(
+                      50,
+                      50 +
+                        (parseInt(tooltip.id.slice(2), 2) -
+                          1 -
+                          2 ** (depth - 2)) *
+                          ((dimensions.height - 200) / 2 ** (depth - 2))
+                    ),
+                    right: 50,
+                  }
+            }
+          >
+            {"0x" + padToEven(parseInt(tooltip.id.slice(2), 2).toString(16))}
           </div>
         )}
       </div>
