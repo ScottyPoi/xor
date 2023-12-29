@@ -13,12 +13,12 @@ export const generateTreeData = (
   height: number
 ): ITreeNode => {
 
-    const rootNodePosition = { x: width / 2, y: width / 2 };
-    const root: ITreeNode = { id: "0x", ...rootNodePosition, angle: 0 };
+    const rootNodePosition = { x: width / 2, y: (height / 2) + 25 };
+    const root: ITreeNode = { id: "0b", ...rootNodePosition, angle: 0 };
   
     const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
       if (level < depth) {
-        const e = depth / (4 + depth);
+        const e = depth / (1 + depth);
         const distance = ((level ** e / (depth - 1) ** e) * width) / 2;
         const baseAngle = node.angle;
         node.children = [0, 1].map((i) => {
