@@ -1,8 +1,17 @@
 // filename: BinaryTreeVisualization.tsx
-import React, { useState, useEffect, useRef, ChangeEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  useCallback,
+  useMemo,
+} from "react";
 import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
 import { generateTreeData } from "./treeUtils";
+import { ITreeNode } from "./types";
+import { useWindowSize } from "./useWindowSize";
 
 const padToEven = (hex: string) => {
   if (hex.length % 2 === 0) {
@@ -11,15 +20,10 @@ const padToEven = (hex: string) => {
     return "0" + hex;
   }
 };
-interface ITreeNode {
-  id: string;
-  x: number;
-  y: number;
-  angle: number;
-  children?: ITreeNode[];
-}
 
 const BinaryTreeVisualization: React.FC = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const { width, height } = useWindowSize(); // Use our custom hook
   const [depth, setDepth] = useState(1);
   const [selected, setSelected] = useState("");
   const [tooltip, setTooltip] = useState<{
@@ -27,51 +31,52 @@ const BinaryTreeVisualization: React.FC = () => {
     y: number;
     id: string;
   } | null>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const [dimensions, setDimensions] = useState({
-    width: (2 * window.outerWidth) / 3,
-    height: window.outerHeight - 20,
-  });
 
-  const handleDepthChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
-    setDepth(newDepth);
-  };
+  // Handle depth change with useCallback hook to memoize the function
+  const handleDepthChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
+      setDepth(newDepth);
+    },
+    []
+  );
 
-  const handleMouseOver = (node: ITreeNode) => {
+  const handleMouseOver = useCallback((node: ITreeNode) => {
     console.log("mouseover");
-    node.id.length === depth + 1
-      ? setTooltip({ x: node.x, y: node.y, id: node.id })
-      : setTooltip(null);
-  };
-
-  const handleMouseOut = () => {
-    console.log("mouseout");
-    setTooltip(null);
-  };
-
-  const handleClick = (node: ITreeNode) => {
-    node.id.length === depth + 1 && setSelected(node.id);
-  };
-
-  const handleResize = () => {
-    setDimensions({
-      width: (2 * window.outerWidth) / 3,
-      height: window.innerHeight - 20,
-    });
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    setTooltip({ x: node.x, y: node.y, id: node.id });
   }, []);
 
+  const handleMouseOut = useCallback((node: ITreeNode) => {
+    console.log("mouseout");
+    setTooltip(null);
+  }, []);
+
+  const handleClick = useCallback((node: any) => {
+    console.log({
+      id: node.data.id,
+      d_depth: node.depth,
+      depth,
+      select: node.depth === depth - 1,
+    });
+    node.depth === depth - 1 && setSelected(node.data.id);
+  }, []);
+
+  // useMemo to memoize the tree data based on the depth and dimensions
+  const treeData = useMemo(
+    () => generateTreeData(depth, width, height),
+    [depth, width, height]
+  );
+
   useEffect(() => {
-    const { width, height } = dimensions;
+    // Ensure our ref is currently holding a value
+    if (!svgRef.current) {
+      return;
+    }
     const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-    const treeData = generateTreeData(depth, width, height); // Dynamic dimensions based on viewport
-    const nodes = d3.hierarchy(treeData).descendants();
+    svg.selectAll("*").remove(); // Clear canvas
+
+    const root = d3.hierarchy(treeData);
+    const nodes = root.descendants();
     const links = nodes.slice(1);
 
     // Links
@@ -130,17 +135,27 @@ const BinaryTreeVisualization: React.FC = () => {
           : "#f99"
       )
       .style("stroke", (d) => (d.data.id === selected ? "#000" : "none"))
-      .on("mouseover", (e, d) => handleMouseOver(d.data))
-      .on("mouseout", () => handleMouseOut())
-      .on("mousedown", (e, d) => handleClick(d.data));
+      // Define the enter pattern for new nodes
+      .on("mouseover", (event, d) => handleMouseOver(d.data))
+      .on("mouseout", handleMouseOut)
+      .on("mousedown", (event, d) => handleClick(d));
 
-    // Text
+    // If nodes are exiting, define the exit pattern
+    nodeEnter.exit().remove(); // Text
     nodeEnter
       .append("text")
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text((d) => (d.depth === depth ? d.data.id : ""));
-  }, [depth, dimensions, tooltip]);
+  }, [
+    treeData,
+    handleMouseOver,
+    handleMouseOut,
+    handleClick,
+    tooltip,
+    selected,
+    depth,
+  ]);
 
   return (
     <div>
@@ -163,48 +178,53 @@ const BinaryTreeVisualization: React.FC = () => {
           max={16}
           className="depth-input"
         />
-        <h3>
-          selected:{" "}
+        <h3 style={{ textAlign: "left", paddingInline: 10 }}>
+          selected: {selected.slice(2)}
+          <br />
+          node_id:{" "}
           {"0x" + padToEven(parseInt(selected.slice(2), 2).toString(16))}
         </h3>
       </header>
       <div className="tree-container">
         <svg
           ref={svgRef}
-          width={dimensions.width}
-          height={dimensions.height}
+          width={width}
+          height={height}
           className="tree-svg"
-        />
-        {tooltip && (
-          <div
-            className="tooltip"
-            style={
-              tooltip.id.startsWith("0x0")
-                ? {
-                    top:
-                      50 +
-                      (2 ** (depth - 2) -
-                        parseInt(tooltip.id.slice(2), 2) -
-                        1) *
-                        ((dimensions.height - 200) / 2 ** (depth - 2)),
-                    left: 50,
-                  }
-                : {
-                    top: Math.max(
-                      50,
-                      50 +
-                        (parseInt(tooltip.id.slice(2), 2) -
-                          1 -
-                          2 ** (depth - 2)) *
-                          ((dimensions.height - 200) / 2 ** (depth - 2))
-                    ),
-                    right: 50,
-                  }
-            }
-          >
-            {"0x" + padToEven(parseInt(tooltip.id.slice(2), 2).toString(16))}
-          </div>
-        )}
+        ></svg>
+        {
+          tooltip && (
+            <div
+              className="tooltip"
+              style={
+                tooltip.id.startsWith("0b0")
+                  ? {
+                      top:
+                        50 +
+                        (2 ** (depth - 2) -
+                          parseInt(tooltip.id.slice(2), 2) -
+                          1) *
+                          ((height - 200) / 2 ** (depth - 2)),
+                      left: 50,
+                    }
+                  : {
+                      top: Math.max(
+                        50,
+                        50 +
+                          (parseInt(tooltip.id.slice(2), 2) -
+                            1 -
+                            2 ** (depth - 2)) *
+                            ((height - 200) / 2 ** (depth - 2))
+                      ),
+                      right: 50,
+                    }
+              }
+            >
+              {tooltip.id}
+            </div>
+          )
+          // Tooltip div and content logic here
+        }
       </div>
     </div>
   );
