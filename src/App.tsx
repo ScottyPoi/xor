@@ -11,7 +11,6 @@ function App() {
       <ErrorBoundary>
         <BinaryTreeVisualization />
       </ErrorBoundary>
-      {/* <VisualizationApp /> */}
     </div>
   );
 }
