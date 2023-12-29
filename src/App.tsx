@@ -1,7 +1,6 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import VisualizationApp from "./circle";
 import ErrorBoundary from "./ErrorBoundary";
 
 import BinaryTreeVisualization from "./BinaryTreeVisualization";
