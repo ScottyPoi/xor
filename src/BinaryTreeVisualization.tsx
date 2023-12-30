@@ -27,7 +27,7 @@ interface LinkProps {
   linkData: d3.HierarchyNode<ITreeNode>;
 }
 
-const Node = ({
+export const TreeNode = ({
   treeNode,
   handleMouseOver,
   handleMouseOut,
@@ -62,7 +62,7 @@ const Node = ({
   );
 };
 
-const Link = ({ linkData }: LinkProps) => {
+export const NodeLink = ({ linkData }: LinkProps) => {
   return (
     <line
       x1={linkData.parent!.data.x}
@@ -183,10 +183,10 @@ const BinaryTreeVisualization: React.FC = () => {
       <div className="tree-container">
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
           {links.map((linkData, index) => (
-            <Link key={index} linkData={linkData} />
+            <NodeLink key={index} linkData={linkData} />
           ))}
           {nodes.map((nodeData) => (
-            <Node
+            <TreeNode
               key={nodeData.id}
               treeNode={nodeData}
               handleMouseOver={handleMouseOver}
