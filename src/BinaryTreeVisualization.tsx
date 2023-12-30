@@ -11,7 +11,7 @@ import "./BinaryTreeVisualization.css";
 import { generateTreeData } from "./treeUtils";
 import { ITreeNode } from "./types";
 import { useWindowSize } from "./useWindowSize";
-import classNames from "classnames";
+// import classNames from "classnames";
 import TreeNode, { NodeLink } from "./TreeNode";
 import Header from "./Header";
 import InfoContainer from "./InfoContainer";
@@ -67,7 +67,7 @@ const BinaryTreeVisualization: React.FC = () => {
     } else {
       setNodeB(null);
     }
-  }, []);
+  }, [depth]);
 
   const handleMouseOut = useCallback(() => {
     console.log("mouseout");

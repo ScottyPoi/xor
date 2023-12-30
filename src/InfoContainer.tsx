@@ -26,6 +26,10 @@ export default function InfoContainer({
       <table>
         <tbody>
           <tr>
+            <th>{(tooltip && tooltip.id) ? tooltip.id + '_'.repeat(depth + 1 - tooltip.id.length) : '_'.repeat(depth + 2)} {' '}</th>
+            <td>{'---'}</td>
+          </tr>
+          <tr>
             <th>Depth:</th>
             <td>{depth}</td>
           </tr>
@@ -34,6 +38,15 @@ export default function InfoContainer({
             <td>{2 ** depth}</td>
           </tr>
           <tr>
+            <th>Radius:</th>
+            <td>N/A</td>
+          </tr>
+          <tr
+            style={{
+              color: "white",
+              background: selected.endsWith("1") ? "#00f" : "#f00",
+            }}
+          >
             <th>Node_A:</th>
             <td>
               <tr>
@@ -48,6 +61,51 @@ export default function InfoContainer({
               </tr>
             </td>
           </tr>
+          {selected && (
+            <tr>
+              <th>
+                Distances:
+                <br />0 - 2^ {depth} - 1
+              </th>
+              <td>
+                {Array.from({ length: Math.min(16, 2 ** depth - 1) }, (_, i) =>
+                  i < Math.min(16, 2 ** depth - 1) / 2
+                    ? i
+                    : 2 ** depth - Math.min(16, 2 ** depth - 1) + i
+                ).map((x) => {
+                  const s = parseInt(selected.slice(2), 2);
+                  const d = x ^ s;
+                  const hex = padToEven(d.toString(16));
+                  const bin = d.toString(2);
+                  return (
+                    <>
+                      <tr>
+                        <th>
+                          {x < Math.min(16, 2 ** depth - 1) / 2
+                            ? x
+                            : "2^" + depth + "-" + (2 ** depth - x)}
+                        </th>
+                        <td
+                          style={{
+                            color: "white",
+                            background: bin.endsWith("1") ? "#00f" : "#f00",
+                          }}
+                        >
+                          0x
+                          {hex}
+                        </td>
+                      </tr>
+                      {x === Math.min(16, 2 ** depth - 1) / 2 - 1 && (
+                        <tr>
+                          <th>. . .</th>
+                        </tr>
+                      )}
+                    </>
+                  );
+                })}
+              </td>
+            </tr>
+          )}
           {nodeB && nodeB.id && (
             <tr>
               <th>Node_B:</th>
@@ -68,6 +126,7 @@ export default function InfoContainer({
               </td>
             </tr>
           )}
+
           {nodeB && nodeB.id && (
             <tr>
               <th>Distance:</th>
