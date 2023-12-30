@@ -52,13 +52,8 @@ const BinaryTreeVisualization: React.FC = () => {
   }, []);
   const handleClick = useCallback((node: d3.HierarchyNode<ITreeNode>) => {
     if (node.data.id.slice(2).length === depth - 1) {
-      if (nodeB !== null && node.data.id === nodeB.id) {
-        console.log("click", "set null");
-        setNodeB(null);
-        return;
-      }
       setNodeB((prevNodeB) => {
-        console.log("click", node.data.id, prevNodeB?.id);
+        console.log("click", node.data.id, prevNodeB?.id, 0);
         if (node.data.id === prevNodeB?.id) {
           return null;
         }
