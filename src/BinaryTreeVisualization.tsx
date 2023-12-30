@@ -78,10 +78,10 @@ const BinaryTreeVisualization: React.FC = () => {
   return (
     <div>
       <Header
-      depth={depth}
-      setDepth={setDepth}
-      handleDepthChange={handleDepthChange}
-      selected={selected}
+        depth={depth}
+        setDepth={setDepth}
+        handleDepthChange={handleDepthChange}
+        selected={selected}
       />
       <div className="tree-container">
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
@@ -92,6 +92,12 @@ const BinaryTreeVisualization: React.FC = () => {
               selected={selected.startsWith(linkData.data.id)}
               tooltip={
                 tooltip ? tooltip.id.startsWith(linkData.data.id) : false
+              }
+              path={
+                tooltip
+                  ? selected.startsWith(linkData.data.id) ||
+                    tooltip.id.startsWith(linkData.data.id)
+                  : false
               }
             />
           ))}

@@ -63,9 +63,15 @@ export interface LinkProps {
   linkData: d3.HierarchyNode<ITreeNode>;
   selected: boolean;
   tooltip: boolean;
+  path?: boolean;
 }
 
-export const NodeLink = ({ linkData, selected, tooltip }: LinkProps) => {
+export const NodeLink = ({
+  linkData,
+  selected,
+  tooltip,
+  path = false,
+}: LinkProps) => {
   return (
     <line
       x1={linkData.parent!.data.x}
@@ -75,12 +81,12 @@ export const NodeLink = ({ linkData, selected, tooltip }: LinkProps) => {
       stroke={
         linkData.data.id.endsWith("1")
           ? "#" +
-            Math.min(15, linkData.depth).toString(16) +
-            Math.min(15, linkData.depth).toString(16) +
+            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
             "f"
           : "#f" +
-            Math.min(15, linkData.depth).toString(16) +
-            Math.min(15, linkData.depth).toString(16)
+            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
       }
       strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
       strokeOpacity={selected ? 1 : tooltip ? 0.75 : 0.5}
