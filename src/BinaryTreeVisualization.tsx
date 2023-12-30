@@ -13,6 +13,7 @@ import { ITreeNode } from "./types";
 import { useWindowSize } from "./useWindowSize";
 import classNames from "classnames";
 import TreeNode, { NodeLink } from "./TreeNode";
+import Header from "./Header";
 
 const BinaryTreeVisualization: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -76,32 +77,12 @@ const BinaryTreeVisualization: React.FC = () => {
 
   return (
     <div>
-      <header className="controls">
-        <button className="button" onClick={() => setDepth(depth + 1)}>
-          Increase Depth
-        </button>
-        <button
-          className="button"
-          onClick={() => setDepth(Math.max(depth - 1, 1))}
-        >
-          Decrease Depth
-        </button>
-        <span>Depth: {depth}</span>
-        <input
-          type="number"
-          value={depth}
-          onChange={handleDepthChange}
-          min={1}
-          max={16}
-          className="depth-input"
-        />
-        <h3 style={{ textAlign: "left", paddingInline: 10 }}>
-          selected: {selected.slice(2)}
-          <br />
-          node_id:{" "}
-          {"0x" + padToEven(parseInt(selected.slice(2), 2).toString(16))}
-        </h3>
-      </header>
+      <Header
+      depth={depth}
+      setDepth={setDepth}
+      handleDepthChange={handleDepthChange}
+      selected={selected}
+      />
       <div className="tree-container">
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
           {links.map((linkData, index) => (
