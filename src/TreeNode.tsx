@@ -23,19 +23,36 @@ const TreeNode = ({
       cy={nodeData.y}
       r={tooltip ? 16 : selected ? 16 : Math.max(1, 16 - treeNode.depth)} // Specify the radius of the circle
       fill={
-        tooltip
+        // "#aaf"
+        selected
+          ? nodeData.id.endsWith("1")
+            ? "#00f"
+            : "#f00"
+          : tooltip
           ? nodeData.id.endsWith("1")
             ? "#55f"
             : "#f55"
+          : nodeData.id.endsWith("1")
+          ? "#99f"
+          : "#f99"
+      } // Specify the fill color of the circle
+      fillOpacity={selected ? 1 : 0.75}
+      strokeWidth={2}
+      stroke={
+        selected
+          ? "#000"
+          : tooltip
+          ? nodeData.id.endsWith("1")
+            ? "#00f"
+            : "#f00"
           : selected
           ? nodeData.id.endsWith("1")
             ? "#00f"
             : "#f00"
           : nodeData.id.endsWith("1")
-          ? "#99f"
-          : "#f99"
-      } // Specify the fill color of the circle
-      stroke={selected ? "#000" : "none"} // Specify the stroke color of the circle
+          ? "#88f"
+          : "#f88"
+      } // Specify the stroke color of the circle
       onMouseOver={() => handleMouseOver(nodeData)}
       onMouseOut={handleMouseOut}
       onMouseDown={() => handleClick(treeNode)}
@@ -63,7 +80,8 @@ export const NodeLink = ({ linkData }: LinkProps) => {
             Math.min(15, linkData.depth).toString(16) +
             Math.min(15, linkData.depth).toString(16)
       }
-      strokeWidth={10 - (3 * linkData.depth) / 4}
+      strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
+      strokeOpacity={0.5}
     />
   );
 };
