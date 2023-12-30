@@ -8,12 +8,13 @@ import React, {
 } from "react";
 import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
-import { generateTreeData, padToEven } from "./treeUtils";
+import { generateTreeData } from "./treeUtils";
 import { ITreeNode } from "./types";
 import { useWindowSize } from "./useWindowSize";
 import classNames from "classnames";
 import TreeNode, { NodeLink } from "./TreeNode";
 import Header from "./Header";
+import InfoContainer from "./InfoContainer";
 
 const BinaryTreeVisualization: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -84,6 +85,7 @@ const BinaryTreeVisualization: React.FC = () => {
         selected={selected}
       />
       <div className="tree-container">
+        <InfoContainer depth={depth} selected={selected} tooltip={tooltip} />
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
           {links.map((linkData, index) => (
             <NodeLink
@@ -113,7 +115,7 @@ const BinaryTreeVisualization: React.FC = () => {
             />
           ))}
         </svg>
-        {tooltip && (
+        {/* {tooltip && (
           <div
             className={classNames("tooltip", {
               "tooltip-top": tooltip.id.startsWith("0b0"),
@@ -122,7 +124,7 @@ const BinaryTreeVisualization: React.FC = () => {
           >
             {tooltip.id}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

@@ -7,11 +7,19 @@
   top: 0;
   left: 0;
   background-color: #eee;
-  padding: 10px;
+  padding: 1px;
   z-index: 1000;
 }
 
+.info-container table {
+  margin-left: 1em;
+  width: max-content;
+  height: max-content;
+  text-align: left;
+}
+
 .tree-container {
+  display: inline-flex;
   margin-top: 50px; /* Space for the header */
   height: calc(100vh - 50px); /* Full height minus header space */
   overflow: auto; /* Enables scroll */
@@ -50,8 +58,8 @@
 }
 
 .button {
-  padding: 5px 10px;
-  margin-right: 10px;
+  padding: 1px;
+  margin-right: 1px;
 }
 
 .depth-input {

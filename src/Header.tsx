@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from "react";
-import { padToEven } from "./treeUtils";
 
 interface HeaderProps {
   depth: number;
@@ -33,11 +32,11 @@ export default function Header({
         max={16}
         className="depth-input"
       />
-      <h3 style={{ textAlign: "left", paddingInline: 10 }}>
+      {/* <h3 style={{ textAlign: "left", paddingInline: 10 }}>
         selected: {selected.slice(2)}
         <br />
         node_id: {"0x" + padToEven(parseInt(selected.slice(2), 2).toString(16))}
-      </h3>
+      </h3> */}
     </header>
   );
 }
