@@ -49,21 +49,20 @@
 }
 
 .link {
-  /* Styles for the links (lines between nodes) */
-  stroke: #999;
-  stroke-opacity: 0.6;
+  fill: none;
+  stroke: #555;
+  stroke-width: 1.5px;
 }
 
 .node circle {
-  /* Styles for the node circles */
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 3px;
+  fill: steelblue;
+  stroke: white;
+  stroke-width: 1.5px;
 }
 
 .node text {
-  /* Styles for the text labels */
   font: 10px sans-serif;
+  user-select: none;
 }
 
 .button {
