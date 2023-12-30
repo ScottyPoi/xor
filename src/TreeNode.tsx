@@ -61,9 +61,11 @@ const TreeNode = ({
 };
 export interface LinkProps {
   linkData: d3.HierarchyNode<ITreeNode>;
+  selected: boolean;
+  tooltip: boolean;
 }
 
-export const NodeLink = ({ linkData }: LinkProps) => {
+export const NodeLink = ({ linkData, selected, tooltip }: LinkProps) => {
   return (
     <line
       x1={linkData.parent!.data.x}
@@ -81,7 +83,7 @@ export const NodeLink = ({ linkData }: LinkProps) => {
             Math.min(15, linkData.depth).toString(16)
       }
       strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
-      strokeOpacity={0.5}
+      strokeOpacity={selected ? 1 : tooltip ? 0.75 : 0.5}
     />
   );
 };

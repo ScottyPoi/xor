@@ -105,7 +105,14 @@ const BinaryTreeVisualization: React.FC = () => {
       <div className="tree-container">
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
           {links.map((linkData, index) => (
-            <NodeLink key={index} linkData={linkData} />
+            <NodeLink
+              key={index}
+              linkData={linkData}
+              selected={selected.startsWith(linkData.data.id)}
+              tooltip={
+                tooltip ? tooltip.id.startsWith(linkData.data.id) : false
+              }
+            />
           ))}
           {nodes.map((nodeData) => (
             <TreeNode
