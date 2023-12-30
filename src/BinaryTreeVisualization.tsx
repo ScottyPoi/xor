@@ -12,6 +12,7 @@ import "./BinaryTreeVisualization.css";
 import { generateTreeData } from "./treeUtils";
 import { ITreeNode } from "./types";
 import { useWindowSize } from "./useWindowSize";
+import { HierarchyNode, BaseType } from "d3";
 
 const padToEven = (hex: string) => {
   if (hex.length % 2 === 0) {
@@ -34,11 +35,11 @@ const BinaryTreeVisualization: React.FC = () => {
 
   // Handle depth change with useCallback hook to memoize the function
   const handleDepthChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: ChangeEvent<HTMLInputElement>) => {
       const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
       setDepth(newDepth);
     },
-    []
+    [setDepth]
   );
 
   const handleMouseOver = useCallback((node: ITreeNode) => {
@@ -46,7 +47,7 @@ const BinaryTreeVisualization: React.FC = () => {
     setTooltip({ x: node.x, y: node.y, id: node.id });
   }, []);
 
-  const handleMouseOut = useCallback((node: ITreeNode) => {
+  const handleMouseOut = useCallback(() => {
     console.log("mouseout");
     setTooltip(null);
   }, []);
@@ -59,7 +60,7 @@ const BinaryTreeVisualization: React.FC = () => {
       select: node.depth === depth - 1,
     });
     node.depth === depth - 1 && setSelected(node.data.id);
-  }, []);
+  }, [depth]);
 
   // useMemo to memoize the tree data based on the depth and dimensions
   const treeData = useMemo(
@@ -80,12 +81,14 @@ const BinaryTreeVisualization: React.FC = () => {
     const links = nodes.slice(1);
 
     // Links
-    svg
-      .selectAll(".link")
-      .data(links)
+    const linkSelection = svg
+      .selectAll<SVGLineElement, HierarchyNode<ITreeNode>>(".link")
+      .data(links);
+    linkSelection
       .enter()
       .append("line")
       .attr("class", "link")
+      .merge(linkSelection)
       .attr("x1", (d) => d.parent!.data.x)
       .attr("y1", (d) => d.parent!.data.y)
       .attr("x2", (d) => d.data.x)
@@ -102,18 +105,20 @@ const BinaryTreeVisualization: React.FC = () => {
       )
       .style("stroke-width", (d) => 10 - (3 * d.depth) / 4);
 
+    linkSelection.exit().remove();
+
     // Nodes
-    const nodeEnter = svg
-      .selectAll(".node")
-      .data(nodes)
+    const nodeSelection = svg.selectAll(".node").data(nodes);
+
+    const nodeEnter = nodeSelection
       .enter()
       .append("g")
       .attr("class", "node")
       .attr("transform", (d) => `translate(${d.data.x},${d.data.y})`);
 
-    // Circles
     nodeEnter
       .append("circle")
+      .merge(nodeSelection.select("circle"))
       .attr("r", (d) =>
         d.data.id === tooltip?.id
           ? 16
@@ -135,18 +140,23 @@ const BinaryTreeVisualization: React.FC = () => {
           : "#f99"
       )
       .style("stroke", (d) => (d.data.id === selected ? "#000" : "none"))
-      // Define the enter pattern for new nodes
-      .on("mouseover", (event, d) => handleMouseOver(d.data))
+      .on("mouseover", (_, d) => handleMouseOver(d.data))
       .on("mouseout", handleMouseOut)
-      .on("mousedown", (event, d) => handleClick(d));
+      .on("mousedown", (_, d) => handleClick(d));
 
-    // If nodes are exiting, define the exit pattern
-    nodeEnter.exit().remove(); // Text
+    nodeSelection.exit().remove();
+
+    // Text
+    const textSelection = nodeSelection.select<SVGTextElement>("text");
+
     nodeEnter
       .append("text")
+      .merge(textSelection)
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
       .text((d) => (d.depth === depth ? d.data.id : ""));
+
+    textSelection.exit().remove();
   }, [
     treeData,
     handleMouseOver,
@@ -192,39 +202,36 @@ const BinaryTreeVisualization: React.FC = () => {
           height={height}
           className="tree-svg"
         ></svg>
-        {
-          tooltip && (
-            <div
-              className="tooltip"
-              style={
-                tooltip.id.startsWith("0b0")
-                  ? {
-                      top:
-                        50 +
-                        (2 ** (depth - 2) -
-                          parseInt(tooltip.id.slice(2), 2) -
-                          1) *
-                          ((height - 200) / 2 ** (depth - 2)),
-                      left: 50,
-                    }
-                  : {
-                      top: Math.max(
-                        50,
-                        50 +
-                          (parseInt(tooltip.id.slice(2), 2) -
-                            1 -
-                            2 ** (depth - 2)) *
-                            ((height - 200) / 2 ** (depth - 2))
-                      ),
-                      right: 50,
-                    }
-              }
-            >
-              {tooltip.id}
-            </div>
-          )
-          // Tooltip div and content logic here
-        }
+        {tooltip && (
+          <div
+            className="tooltip"
+            style={
+              tooltip.id.startsWith("0b0")
+                ? {
+                    top:
+                      50 +
+                      (2 ** (depth - 2) -
+                        parseInt(tooltip.id.slice(2), 2) -
+                        1) *
+                        ((height - 200) / 2 ** (depth - 2)),
+                    left: 50,
+                  }
+                : {
+                    top: Math.max(
+                      50,
+                      50 +
+                        (parseInt(tooltip.id.slice(2), 2) -
+                          1 -
+                          2 ** (depth - 2)) *
+                          ((height - 200) / 2 ** (depth - 2))
+                    ),
+                    right: 50,
+                  }
+            }
+          >
+            {tooltip.id}
+          </div>
+        )}
       </div>
     </div>
   );
