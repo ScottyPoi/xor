@@ -4,6 +4,7 @@ export interface NodeProps {
   treeNode: d3.HierarchyNode<ITreeNode>;
   handleMouseOver: (nodeData: ITreeNode) => void;
   handleMouseOut: () => void;
+  handleDoubleClick: (node: d3.HierarchyNode<ITreeNode>) => void;
   handleClick: (node: d3.HierarchyNode<ITreeNode>) => void;
   selected: boolean;
   tooltip: boolean;
@@ -13,6 +14,7 @@ const TreeNode = ({
   handleMouseOver,
   handleMouseOut,
   handleClick,
+  handleDoubleClick,
   selected = false,
   tooltip = false,
 }: NodeProps) => {
@@ -55,7 +57,8 @@ const TreeNode = ({
       } // Specify the stroke color of the circle
       onMouseOver={() => handleMouseOver(nodeData)}
       onMouseOut={handleMouseOut}
-      onMouseDown={() => handleClick(treeNode)}
+      onDoubleClick={() => handleDoubleClick(treeNode)}
+      onClick={() => handleClick(treeNode)}
     />
   );
 };
@@ -81,15 +84,23 @@ export const NodeLink = ({
       stroke={
         linkData.data.id.endsWith("1")
           ? "#" +
-            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
-            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+            (path
+              ? "0"
+              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+            (path
+              ? "0"
+              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
             "f"
           : "#f" +
-            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
-            (path ? "0" : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
+            (path
+              ? "0"
+              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+            (path
+              ? "0"
+              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
       }
       strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
-      strokeOpacity={selected ? 1 : tooltip ? 0.75 : 0.5}
+      strokeOpacity={selected ? 1 : tooltip ? 0.75 : path ? 0.75 : 0.5}
     />
   );
 };

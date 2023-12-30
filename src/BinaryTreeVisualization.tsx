@@ -26,6 +26,11 @@ const BinaryTreeVisualization: React.FC = () => {
     y: number;
     id: string;
   } | null>(null);
+  const [nodeB, setNodeB] = useState<{
+    x: number;
+    y: number;
+    id: string;
+  } | null>(null);
 
   // Handle depth change with useCallback hook to memoize the function
   const handleDepthChange = useCallback(
@@ -45,13 +50,24 @@ const BinaryTreeVisualization: React.FC = () => {
       id: node.id,
     }));
   }, []);
+  const handleClick = useCallback((node: d3.HierarchyNode<ITreeNode>) => {
+    console.log("click");
+    if (node.data.id.slice(2).length === depth - 1) {
+      setNodeB((prevNodeB) => ({
+        ...prevNodeB,
+        x: node.data.x,
+        y: node.data.y,
+        id: node.data.id,
+      }));
+    }
+  }, []);
 
   const handleMouseOut = useCallback(() => {
     console.log("mouseout");
     setTooltip((prevTooltip) => ({ ...prevTooltip, x: 0, y: 0, id: "" }));
   }, []);
 
-  const handleClick = useCallback(
+  const handleDoubleClick = useCallback(
     (node: d3.HierarchyNode<ITreeNode>) => {
       console.log({
         id: node.data.id,
@@ -85,7 +101,12 @@ const BinaryTreeVisualization: React.FC = () => {
         selected={selected}
       />
       <div className="tree-container">
-        <InfoContainer depth={depth} selected={selected} tooltip={tooltip} />
+        <InfoContainer
+          depth={depth}
+          selected={selected}
+          tooltip={tooltip}
+          nodeB={nodeB}
+        />
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
           {links.map((linkData, index) => (
             <NodeLink
@@ -96,9 +117,9 @@ const BinaryTreeVisualization: React.FC = () => {
                 tooltip ? tooltip.id.startsWith(linkData.data.id) : false
               }
               path={
-                tooltip
+                nodeB
                   ? selected.startsWith(linkData.data.id) ||
-                    tooltip.id.startsWith(linkData.data.id)
+                    nodeB.id.startsWith(linkData.data.id)
                   : false
               }
             />
@@ -109,6 +130,7 @@ const BinaryTreeVisualization: React.FC = () => {
               treeNode={nodeData}
               handleMouseOver={handleMouseOver}
               handleMouseOut={handleMouseOut}
+              handleDoubleClick={handleDoubleClick}
               handleClick={handleClick}
               selected={nodeData.data.id === selected}
               tooltip={tooltip?.id === nodeData.data.id}

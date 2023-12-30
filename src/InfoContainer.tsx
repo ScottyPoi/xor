@@ -7,12 +7,18 @@ interface InfoContainerProps {
     y: number;
     id: string;
   } | null;
+  nodeB: {
+    x: number;
+    y: number;
+    id: string;
+  } | null;
   depth: number;
 }
 
 export default function InfoContainer({
   selected,
   tooltip,
+  nodeB,
   depth,
 }: InfoContainerProps) {
   return (
@@ -28,7 +34,7 @@ export default function InfoContainer({
             <td>{2 ** depth}</td>
           </tr>
           <tr>
-            <th>Selected:</th>
+            <th>Node_A:</th>
             <td>
               <tr>
                 <th>binary:</th>
@@ -42,28 +48,35 @@ export default function InfoContainer({
               </tr>
             </td>
           </tr>
-          <tr>
-            <th>Cursor:</th>
-            {tooltip && (
+          {nodeB && nodeB.id && (
+            <tr>
+              <th>Node_B:</th>
               <td>
-                    <tr>
-                      <th>binary:</th>
-                      <td>{tooltip.id}</td>
-                    </tr>
-                    <tr>
-                      <th>hex_id:</th>
-                      <td>
-                        {tooltip.id
-                          ? "0x" +
-                            padToEven(
-                              parseInt(tooltip.id.slice(2), 2).toString(16)
-                            )
-                          : ""}
-                      </td>
-                    </tr>
+                <tr>
+                  <th>binary:</th>
+                  <td>{nodeB.id}</td>
+                </tr>
+                <tr>
+                  <th>hex_id:</th>
+                  <td>
+                    {nodeB.id
+                      ? "0x" +
+                        padToEven(parseInt(nodeB.id.slice(2), 2).toString(16))
+                      : ""}
+                  </td>
+                </tr>
               </td>
-            )}
-          </tr>
+            </tr>
+          )}
+          {nodeB && nodeB.id && (
+            <tr>
+              <th>Distance:</th>
+              <td>
+                {parseInt(nodeB.id.slice(2), 2) ^
+                  parseInt(selected.slice(2), 2)}
+              </td>
+            </tr>
+          )}
 
           {/* Add more rows as needed */}
         </tbody>
