@@ -39,6 +39,16 @@
   font-size: xx-large;
 }
 
+.tooltip-top {
+  top: 50px;
+  left: 50px;
+}
+
+.tooltip-bottom {
+  top: 50px;
+  right: 50px;
+}
+
 .button {
   padding: 5px 10px;
   margin-right: 10px;
