@@ -51,14 +51,26 @@ const BinaryTreeVisualization: React.FC = () => {
     }));
   }, []);
   const handleClick = useCallback((node: d3.HierarchyNode<ITreeNode>) => {
-    console.log("click");
     if (node.data.id.slice(2).length === depth - 1) {
-      setNodeB((prevNodeB) => ({
-        ...prevNodeB,
-        x: node.data.x,
-        y: node.data.y,
-        id: node.data.id,
-      }));
+      if (nodeB !== null && node.data.id === nodeB.id) {
+        console.log("click", "set null");
+        setNodeB(null);
+        return;
+      }
+      setNodeB((prevNodeB) => {
+        console.log("click", node.data.id, prevNodeB?.id);
+        if (node.data.id === prevNodeB?.id) {
+          return null;
+        }
+        return {
+          ...prevNodeB,
+          x: node.data.x,
+          y: node.data.y,
+          id: node.data.id,
+        };
+      });
+    } else {
+      setNodeB(null);
     }
   }, []);
 
