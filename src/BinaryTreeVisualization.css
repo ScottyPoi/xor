@@ -1,0 +1,80 @@
+/* filename: BinaryTreeVisualization.css */
+
+.controls {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #eee;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.tree-container {
+  margin-top: 50px; /* Space for the header */
+  height: calc(100vh - 50px); /* Full height minus header space */
+  overflow: auto; /* Enables scroll */
+  padding: 10px;
+  outline: 1px solid #F00;
+  border: 1px solid #000;
+  position: relative; /* For absolute positioning of tooltip */
+}
+
+.tree-svg {
+  display: flexbox; /* Fix for scrolling on svg elements */
+  height: auto;
+  outline: 1px solid #0FF;
+  padding: 10px
+}
+
+.tooltip {
+  position: absolute;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  pointer-events: none; /* So mouse events can go to svg elements below */
+  z-index: 10;
+  font-size: xx-large;
+}
+
+.button {
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.depth-input {
+  width: 60px;
+}
+
+.link {
+  fill: none;
+  stroke: #555;
+  stroke-width: 1.5px;
+}
+
+.node circle {
+  fill: steelblue;
+  stroke: white;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+  user-select: none;
+}
+
+.button {
+  /* Styles for control buttons */
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #ccc;
+}
