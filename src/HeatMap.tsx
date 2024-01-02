@@ -30,9 +30,20 @@ const calculateDistance = (first: string, second: string) => {
   return "0x" + d.toString(16).padStart(first.length - 2, "0");
 };
 
+const fillColorById = (id: string) => {
+  return id.endsWith("0") ? "green" : "blue";
+};
+
+const fillColorByDistance = (
+  colorScale: d3.ScaleSequential<string, never>,
+  distance?: string
+) => {
+  return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
+};
+
 export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
   const minDistance = 0;
-  const maxDistance = 2 ** depth - 1;
+  const maxDistance = 2 ** (depth - 1) - 1;
   const arcWidth = 20;
   const center = {
     x: nodes[0].data.x,
@@ -151,7 +162,7 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
           console.log({ startAngle, endAngle });
           const colorScale = d3
             .scaleSequential(d3.interpolateReds)
-            .domain([maxDistance, minDistance]);
+            .domain([minDistance, maxDistance]);
           const arcGenerator = d3.arc();
           return (
             <>
@@ -159,18 +170,26 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
                 d={
                   arcGenerator({
                     innerRadius: 16,
-                    outerRadius: leafDistance + nodeWidth + arcWidth,
+                    outerRadius: leafDistance + 16 + arcWidth,
                     startAngle,
                     endAngle,
                   }) ?? undefined
                 }
-                fill={
-                  distance
-                    ? colorScale(parseInt(distance.slice(2), 16))
-                    : "none"
-                }
-                // fill={nodeData.id.endsWith("0") ? "red" : "blue"}
+                fill={fillColorByDistance(colorScale, distance)}
                 opacity={0.75}
+                transform={`translate(${center.x},${center.y})`}
+              />
+              <path
+                d={
+                  arcGenerator({
+                    innerRadius: leafDistance - nodeWidth,
+                    outerRadius: leafDistance + nodeWidth,
+                    startAngle,
+                    endAngle,
+                  }) ?? undefined
+                }
+                fill={fillColorById(nodeData.id)}
+                opacity={0.25}
                 transform={`translate(${center.x},${center.y})`}
               />
             </>
@@ -190,8 +209,8 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
           return (
             <>
               <line
-                x1={center.x}
-                y1={center.y}
+                x1={node.data.x}
+                y1={node.data.y}
                 x2={nodeCoordinate.x}
                 y2={nodeCoordinate.y}
                 stroke="grey"

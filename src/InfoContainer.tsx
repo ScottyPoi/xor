@@ -65,10 +65,10 @@ export default function InfoContainer({
             <tr>
               <th>
                 Distances:
-                <br />0 - 2^ {depth} - 1
+                <br />0  --  (2^{depth - 1} - 1)
               </th>
               <td>
-                {Array.from({ length: Math.min(16, 2 ** depth - 1) }, (_, i) =>
+                {Array.from({ length: Math.min(16, 2 ** (depth - 1)) }, (_, i) =>
                   i < Math.min(16, 2 ** depth - 1) / 2
                     ? i
                     : 2 ** depth - Math.min(16, 2 ** depth - 1) + i
