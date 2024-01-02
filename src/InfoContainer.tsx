@@ -1,4 +1,5 @@
 import { padToEven } from "./treeUtils";
+import * as d3 from "d3";
 
 interface InfoContainerProps {
   selected: string;
@@ -15,19 +16,36 @@ interface InfoContainerProps {
   depth: number;
 }
 
+const fillColorByDistance = (
+  colorScale: d3.ScaleSequential<string, never>,
+  distance?: string
+) => {
+  return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
+};
+
 export default function InfoContainer({
   selected,
   tooltip,
   nodeB,
   depth,
 }: InfoContainerProps) {
+  const minDistance = 0;
+  const maxDistance = 2 ** (depth - 1) - 1;
+  const colorScale = d3
+    .scaleSequential(d3.interpolateReds)
+    .domain([minDistance, maxDistance]);
+
   return (
     <div className="info-container">
       <table>
         <tbody>
           <tr>
-            <th>{(tooltip && tooltip.id) ? tooltip.id + '_'.repeat(depth + 1 - tooltip.id.length) : '_'.repeat(depth + 2)} {' '}</th>
-            <td>{'---'}</td>
+            <th>
+              {tooltip && tooltip.id
+                ? tooltip.id + "_".repeat(depth + 1 - tooltip.id.length)
+                : "_".repeat(depth + 2)}{" "}
+            </th>
+            <td>{"---"}</td>
           </tr>
           <tr>
             <th>Depth:</th>
@@ -65,13 +83,15 @@ export default function InfoContainer({
             <tr>
               <th>
                 Distances:
-                <br />0  --  (2^{depth - 1} - 1)
+                <br />0 -- (2^{depth - 1} - 1)
               </th>
               <td>
-                {Array.from({ length: Math.min(16, 2 ** (depth - 1)) }, (_, i) =>
-                  i < Math.min(16, 2 ** depth - 1) / 2
-                    ? i
-                    : 2 ** depth - Math.min(16, 2 ** depth - 1) + i
+                {Array.from(
+                  { length: Math.min(16, 2 ** (depth - 1)) },
+                  (_, i) =>
+                    i < Math.min(16, 2 ** (depth - 1)) / 2
+                      ? i
+                      : 2 ** (depth - 1) - Math.min(16, 2 ** (depth - 1)) + i
                 ).map((x) => {
                   const s = parseInt(selected.slice(2), 2);
                   const d = x ^ s;
@@ -83,8 +103,19 @@ export default function InfoContainer({
                         <th>
                           {x < Math.min(16, 2 ** depth - 1) / 2
                             ? x
-                            : "2^" + depth + "-" + (2 ** depth - x)}
+                            : "2^" + (depth-1) + "-" + (2 ** depth - x)}
                         </th>
+                        <td
+                          style={{
+                            color: "white",
+                            background: fillColorByDistance(
+                              colorScale,
+                              '0x' + x.toString(16)
+                            ),
+                          }}
+                        >
+                          ___
+                        </td>
                         <td
                           style={{
                             color: "white",
