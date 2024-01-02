@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 
 interface HeaderProps {
   depth: number;
-  setDepth: React.Dispatch<React.SetStateAction<number>>;
+  setDepth: (d: number) => void;
   handleDepthChange: (event: ChangeEvent<HTMLInputElement>) => void;
   selected: string;
 }

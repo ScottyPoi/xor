@@ -15,6 +15,7 @@ import { useWindowSize } from "./useWindowSize";
 import TreeNode, { NodeLink } from "./TreeNode";
 import Header from "./Header";
 import InfoContainer from "./InfoContainer";
+import HeatMap from "./HeatMap";
 
 const BinaryTreeVisualization: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -32,11 +33,21 @@ const BinaryTreeVisualization: React.FC = () => {
     id: string;
   } | null>(null);
 
+  const changeDepth = (newDepth: number) => {
+    const oldDepth = depth;
+    const newSelected =
+      newDepth <= oldDepth
+        ? selected.slice(0, newDepth + 1)
+        : selected.padEnd(1 + newDepth, selected.slice(-1)[0]);
+    setDepth(newDepth);
+    setSelected((_) => newSelected);
+  };
+
   // Handle depth change with useCallback hook to memoize the function
   const handleDepthChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
-      setDepth(newDepth);
+      changeDepth(newDepth);
     },
     [setDepth]
   );
@@ -50,24 +61,27 @@ const BinaryTreeVisualization: React.FC = () => {
       id: node.id,
     }));
   }, []);
-  const handleClick = useCallback((node: d3.HierarchyNode<ITreeNode>) => {
-    if (node.data.id.slice(2).length === depth - 1) {
-      setNodeB((prevNodeB) => {
-        console.log("click", node.data.id, prevNodeB?.id, 0);
-        if (node.data.id === prevNodeB?.id) {
-          return null;
-        }
-        return {
-          ...prevNodeB,
-          x: node.data.x,
-          y: node.data.y,
-          id: node.data.id,
-        };
-      });
-    } else {
-      setNodeB(null);
-    }
-  }, [depth]);
+  const handleClick = useCallback(
+    (node: d3.HierarchyNode<ITreeNode>) => {
+      if (node.data.id.slice(2).length === depth - 1) {
+        setNodeB((prevNodeB) => {
+          console.log("click", node.data.id, prevNodeB?.id, 0);
+          if (node.data.id === prevNodeB?.id) {
+            return null;
+          }
+          return {
+            ...prevNodeB,
+            x: node.data.x,
+            y: node.data.y,
+            id: node.data.id,
+          };
+        });
+      } else {
+        setNodeB(null);
+      }
+    },
+    [depth]
+  );
 
   const handleMouseOut = useCallback(() => {
     console.log("mouseout");
@@ -103,7 +117,7 @@ const BinaryTreeVisualization: React.FC = () => {
     <div>
       <Header
         depth={depth}
-        setDepth={setDepth}
+        setDepth={changeDepth}
         handleDepthChange={handleDepthChange}
         selected={selected}
       />
@@ -115,6 +129,7 @@ const BinaryTreeVisualization: React.FC = () => {
           nodeB={nodeB}
         />
         <svg ref={svgRef} width={width} height={height} className="tree-svg">
+          {nodes.length > 3 && <HeatMap nodes={nodes} depth={depth} selected={selected} />}
           {links.map((linkData, index) => (
             <NodeLink
               key={index}

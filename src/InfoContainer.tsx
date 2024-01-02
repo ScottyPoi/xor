@@ -44,7 +44,7 @@ export default function InfoContainer({
           <tr
             style={{
               color: "white",
-              background: selected.endsWith("1") ? "#00f" : "#f00",
+              background: selected.endsWith("1") ? "#00f" : "#0f0",
             }}
           >
             <th>Node_A:</th>
@@ -88,7 +88,7 @@ export default function InfoContainer({
                         <td
                           style={{
                             color: "white",
-                            background: bin.endsWith("1") ? "#00f" : "#f00",
+                            background: bin.endsWith("1") ? "#00f" : "#0f0",
                           }}
                         >
                           0x

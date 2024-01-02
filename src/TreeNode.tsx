@@ -29,14 +29,14 @@ const TreeNode = ({
         selected
           ? nodeData.id.endsWith("1")
             ? "#00f"
-            : "#f00"
+            : "#0f0"
           : tooltip
           ? nodeData.id.endsWith("1")
             ? "#55f"
-            : "#f55"
+            : "#5f5"
           : nodeData.id.endsWith("1")
           ? "#99f"
-          : "#f99"
+          : "#9f9"
       } // Specify the fill color of the circle
       fillOpacity={selected ? 1 : 0.75}
       strokeWidth={2}
@@ -46,14 +46,14 @@ const TreeNode = ({
           : tooltip
           ? nodeData.id.endsWith("1")
             ? "#00f"
-            : "#f00"
+            : "#0f0"
           : selected
           ? nodeData.id.endsWith("1")
             ? "#00f"
-            : "#f00"
+            : "#0f0"
           : nodeData.id.endsWith("1")
           ? "#88f"
-          : "#f88"
+          : "#8f8"
       } // Specify the stroke color of the circle
       onMouseOver={() => handleMouseOver(nodeData)}
       onMouseOut={handleMouseOut}
@@ -91,10 +91,11 @@ export const NodeLink = ({
               ? "0"
               : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
             "f"
-          : "#f" +
+          : "#" +
             (path
               ? "0"
               : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
+             "f" +
             (path
               ? "0"
               : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
