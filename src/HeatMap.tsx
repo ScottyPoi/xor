@@ -189,7 +189,7 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
                   }) ?? undefined
                 }
                 fill={fillColorById(nodeData.id)}
-                opacity={0.25}
+                opacity={1}
                 transform={`translate(${center.x},${center.y})`}
               />
             </>
