@@ -32,7 +32,7 @@ const calculateDistance = (first: string, second: string) => {
 
 export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
   const minDistance = 0;
-  const maxDistance = 2 ** (depth) - 1;
+  const maxDistance = 2 ** depth - 1;
   const arcWidth = 20;
   const center = {
     x: nodes[0].data.x,
@@ -89,7 +89,7 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
             ? -2 * Math.PI +
               nodeAngle -
               (rightParentAngle - (-2 * Math.PI + nodeAngle))
-            : Math.PI
+            : nodeAngle - (rightParentAngle - nodeAngle)
           : leftParentAngle;
 
       rightParentAngle =
@@ -102,6 +102,13 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
             ? -Math.PI / 2
             : Math.PI
           : rightParentAngle;
+
+      if (leftParentAngle > rightParentAngle) {
+        leftParentAngle -= Math.PI * 2;
+      }
+      if (rightParentAngle === Math.PI) {
+        rightParentAngle = nodeAngle + (nodeAngle - leftParentAngle);
+      }
 
       return [
         node.data.id,
@@ -141,6 +148,7 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
           const distance = calculateDistance(selected, nodeData.id);
           const startAngle = leafAngles[nodeData.id].leftParentAngle;
           const endAngle = leafAngles[nodeData.id].rightParentAngle;
+          console.log({ startAngle, endAngle });
           const colorScale = d3
             .scaleSequential(d3.interpolateReds)
             .domain([maxDistance, minDistance]);
@@ -169,8 +177,10 @@ export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
           );
         } else if (node.depth > 0) {
           // radial angle relative to center node
-          const nodeAngle =
-            Math.atan2(node.data.y - center.y, node.data.x - center.x);
+          const nodeAngle = Math.atan2(
+            node.data.y - center.y,
+            node.data.x - center.x
+          );
           // point at leaf distance at nodeAngle
           const nodeCoordinate = {
             x: center.x + (leafDistance + arcWidth + 16) * Math.cos(nodeAngle),
