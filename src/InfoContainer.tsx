@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { padToEven } from "./treeUtils";
 import * as d3 from "d3";
 
@@ -14,6 +15,8 @@ interface InfoContainerProps {
     id: string;
   } | null;
   depth: number;
+  radius: number;
+  setRadius: Dispatch<SetStateAction<number>>;
 }
 
 const fillColorByDistance = (
@@ -81,6 +84,8 @@ export default function InfoContainer({
   tooltip,
   nodeB,
   depth,
+  radius,
+  setRadius,
 }: InfoContainerProps) {
   const minDistance = 0;
   const maxDistance = 2 ** (depth - 1) - 1;
@@ -111,7 +116,27 @@ export default function InfoContainer({
           </tr>
           <tr>
             <th>Radius:</th>
-            <td>N/A</td>
+            <td>
+              2^{radius} -1 ({'d < '}{2 ** (radius) - 1})
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button
+              disabled={radius === 0}
+              onClick={() => setRadius((prev) => prev - 1)}
+              >
+              - Radius
+              </button>
+            </td>
+            <td>
+              <button
+              onClick={() => setRadius((prev) => prev + 1)}
+              disabled={radius === depth - 1}
+              >
+              + Radius
+              </button>
+            </td>
           </tr>
           <tr
             style={{
@@ -139,7 +164,7 @@ export default function InfoContainer({
                 Distances:
                 <br />0 -- {2 ** (depth - 1) - 1}
               </th>
-              <div style={{ height: 780, overflow: "auto" }}>
+              <div style={{ maxHeight: 780, overflow: "auto" }}>
                 <td>
                   {Array.from({ length: swatches }, (_, i) => i).map((x) => {
                     const s = parseInt(selected.slice(2), 2);

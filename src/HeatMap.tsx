@@ -55,6 +55,7 @@ interface ILeafHeatProps {
   endAngle: number;
   colorScale: d3.ScaleSequential<string, never>;
   dimensions: ILeafHeatDimensions;
+  inRadius?: boolean;
 }
 
 interface ILeafHeatDimensions {
@@ -66,6 +67,7 @@ interface ILeafHeatDimensions {
 function LeafHeat({
   selected,
   tooltip = false,
+  inRadius = true,
   nodeData,
   startAngle,
   endAngle,
@@ -85,8 +87,6 @@ function LeafHeat({
   const midAngle = (startAngle + endAngle) / 2;
   const depth = nodeData.id.length - 2;
   const fontSize = hovered
-    ? "8rem"
-    : selected === nodeData.id
     ? "8rem"
     : depth < 4
     ? "8rem"
@@ -129,13 +129,29 @@ function LeafHeat({
         id={`${nodeData.id}Arc`}
         d={
           arcGenerator({
-            innerRadius: node_innerRadius + (hovered ? 24 : 16),
-            outerRadius: node_outerRadius + (hovered ? 24 : 16),
+            innerRadius: node_outerRadius,
+            outerRadius: heat_outerRadius + 16,
             startAngle,
-            endAngle: (hovered || selected === nodeData.id) ? endAngle + Math.PI / 2 : endAngle,
+            endAngle: hovered ? endAngle + Math.PI : endAngle,
           }) ?? undefined
         }
         fill={"none"}
+        opacity={1}
+        transform={`translate(${center.x},${center.y})`}
+      />
+      <path
+        onMouseOver={() => setHovered(true)}
+        onMouseOut={() => setHovered(false)}
+        id={`${nodeData.id}Arc`}
+        d={
+          arcGenerator({
+            innerRadius: node_outerRadius,
+            outerRadius: heat_outerRadius + 16,
+            startAngle,
+            endAngle,
+          }) ?? undefined
+        }
+        fill={inRadius ? "yellow" : "none"}
         opacity={1}
         transform={`translate(${center.x},${center.y})`}
       />
@@ -148,6 +164,7 @@ function LeafHeat({
           lengthAdjust={"spacing"}
           fontSize={fontSize}
           href={`#${nodeData.id}Arc`}
+          opacity={1}
         >
           {BigInt(distance).toString()}
         </textPath>
@@ -224,7 +241,7 @@ export default function HeatMap({
   depth,
   selected,
   tooltip = "",
-  radius = 0,
+  radius = 2 ** (depth - 2) - 1,
 }: HeatMapProps) {
   const minDistance = 0;
   const maxDistance = 2 ** (depth - 1) - 1;
@@ -356,6 +373,7 @@ export default function HeatMap({
               startAngle={startAngle}
               endAngle={endAngle}
               selected={selected}
+              inRadius={BigInt(distance) <= BigInt(2 ** (radius) - 1)}
               tooltip={tooltip === node.data.id}
               dimensions={{
                 heat_innerRadius: 16,
@@ -385,7 +403,7 @@ export default function HeatMap({
                 y1={node.data.y}
                 x2={nodeCoordinate.x}
                 y2={nodeCoordinate.y}
-                stroke="grey"
+                stroke="black"
               />
             </>
           );

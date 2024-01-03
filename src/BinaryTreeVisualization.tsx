@@ -32,6 +32,7 @@ const BinaryTreeVisualization: React.FC = () => {
     y: number;
     id: string;
   } | null>(null);
+  const [radius, setRadius] = useState(0);
 
   const changeDepth = (newDepth: number) => {
     const oldDepth = depth;
@@ -39,6 +40,8 @@ const BinaryTreeVisualization: React.FC = () => {
       newDepth <= oldDepth
         ? selected.slice(0, newDepth + 1)
         : selected.padEnd(1 + newDepth, selected.slice(-1)[0]);
+
+    setRadius(Math.min(radius, newDepth));
     setDepth(newDepth);
     setSelected((_) => newSelected);
   };
@@ -127,9 +130,24 @@ const BinaryTreeVisualization: React.FC = () => {
           selected={selected}
           tooltip={tooltip}
           nodeB={nodeB}
+          radius={radius}
+          setRadius={setRadius}
         />
-        <svg ref={svgRef} width={width * 1.2} height={height} className="tree-svg">
-          {nodes.length >= 3 && <HeatMap nodes={nodes} depth={depth} selected={selected} tooltip={tooltip?.id} />}
+        <svg
+          ref={svgRef}
+          width={width * 1.2}
+          height={height}
+          className="tree-svg"
+        >
+          {nodes.length >= 3 && (
+            <HeatMap
+              nodes={nodes}
+              depth={depth}
+              selected={selected}
+              tooltip={tooltip?.id}
+              radius={radius}
+            />
+          )}
           {links.map((linkData, index) => (
             <NodeLink
               key={index}
