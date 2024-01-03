@@ -19,6 +19,7 @@
 }
 
 .tree-container {
+  /* width: 100%; */
   display: inline-flex;
   margin-top: 50px; /* Space for the header */
   height: calc(100vh - 50px); /* Full height minus header space */
@@ -30,10 +31,12 @@
 }
 
 .tree-svg {
-  display: flexbox; /* Fix for scrolling on svg elements */
+  display: flex; /* Fix for scrolling on svg elements */
   height: auto;
+  width: 100%; /* Add this line */
   outline: 1px solid #0FF;
-  padding: 10px
+  padding: 10px;
+  
 }
 
 .tooltip {

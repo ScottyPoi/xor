@@ -128,8 +128,8 @@ const BinaryTreeVisualization: React.FC = () => {
           tooltip={tooltip}
           nodeB={nodeB}
         />
-        <svg ref={svgRef} width={width} height={height} className="tree-svg">
-          {nodes.length > 3 && <HeatMap nodes={nodes} depth={depth} selected={selected} />}
+        <svg ref={svgRef} width={width * 1.2} height={height} className="tree-svg">
+          {nodes.length >= 3 && <HeatMap nodes={nodes} depth={depth} selected={selected} tooltip={tooltip?.id} />}
           {links.map((linkData, index) => (
             <NodeLink
               key={index}
