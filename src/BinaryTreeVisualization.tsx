@@ -116,6 +116,16 @@ const BinaryTreeVisualization: React.FC = () => {
   const nodes = root.descendants();
   const links = nodes.slice(1);
 
+  const nodeById = Object.fromEntries(
+    nodes.map((node) => [node.data.id, node])
+  );
+
+  const setHovered = (id: string) => {
+    const node = nodeById[id];
+    if (!node) return;
+    setTooltip({ x: node.data.x, y: node.data.y, id: node.data.id });
+  };
+
   return (
     <div>
       <Header
@@ -132,6 +142,7 @@ const BinaryTreeVisualization: React.FC = () => {
           nodeB={nodeB}
           radius={radius}
           setRadius={setRadius}
+          setTooltip={setHovered}
         />
         <svg
           ref={svgRef}
@@ -146,6 +157,7 @@ const BinaryTreeVisualization: React.FC = () => {
               selected={selected}
               tooltip={tooltip?.id}
               radius={radius}
+              setHovered={setHovered}
             />
           )}
           {links.map((linkData, index) => (

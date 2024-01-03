@@ -7,6 +7,7 @@ interface HeatMapProps {
   nodes: d3.HierarchyNode<ITreeNode>[];
   depth: number;
   selected: string;
+  setHovered: (id: string) => void;
   tooltip?: string;
   radius?: number;
 }
@@ -56,6 +57,7 @@ interface ILeafHeatProps {
   colorScale: d3.ScaleSequential<string, never>;
   dimensions: ILeafHeatDimensions;
   inRadius?: boolean;
+  setTooltip: (tooltipId: string) => void;
 }
 
 interface ILeafHeatDimensions {
@@ -66,7 +68,8 @@ interface ILeafHeatDimensions {
 }
 function LeafHeat({
   selected,
-  tooltip = false,
+  tooltip,
+  setTooltip,
   inRadius = true,
   nodeData,
   startAngle,
@@ -83,19 +86,26 @@ function LeafHeat({
 }: ILeafHeatProps) {
   const [hovered, setHovered] = useState(false);
   // Only for leaf nodes
+  // const hovered = tooltip
+  const changeHovered = (hover: boolean) => {
+    setHovered(hover);
+    if (hover) {
+      setTooltip(nodeData.id);
+    }
+  }
   const arcGenerator = d3.arc();
   const midAngle = (startAngle + endAngle) / 2;
   const depth = nodeData.id.length - 2;
-  const fontSize = hovered
-    ? "8rem"
+  const fontSize = tooltip
+    ? "7rem"
     : depth < 4
-    ? "8rem"
+    ? "7rem"
     : `${8 / ((depth - 3) * 2)}rem`;
   return (
     <>
       <path
-        onMouseOver={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
+        onMouseOver={() => changeHovered(true)}
+        onMouseOut={() => changeHovered(false)}
         d={
           arcGenerator({
             innerRadius: heat_innerRadius,
@@ -109,8 +119,8 @@ function LeafHeat({
         transform={`translate(${center.x},${center.y})`}
       />
       <path
-        onMouseOver={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
+        onMouseOver={() => changeHovered(true)}
+        onMouseOut={() => changeHovered(false)}
         d={
           arcGenerator({
             innerRadius: node_innerRadius,
@@ -124,15 +134,15 @@ function LeafHeat({
         transform={`translate(${center.x},${center.y})`}
       />
       <path
-        onMouseOver={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
+        onMouseOver={() => changeHovered(true)}
+        onMouseOut={() => changeHovered(false)}
         id={`${nodeData.id}Arc`}
         d={
           arcGenerator({
             innerRadius: node_outerRadius,
             outerRadius: heat_outerRadius + 16,
             startAngle,
-            endAngle: hovered ? endAngle + Math.PI : endAngle,
+            endAngle: (hovered || tooltip) ? endAngle + Math.PI : endAngle,
           }) ?? undefined
         }
         fill={"none"}
@@ -140,8 +150,8 @@ function LeafHeat({
         transform={`translate(${center.x},${center.y})`}
       />
       <path
-        onMouseOver={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
+        onMouseOver={() => changeHovered(true)}
+        onMouseOut={() => changeHovered(false)}
         id={`${nodeData.id}Arc`}
         d={
           arcGenerator({
@@ -156,8 +166,8 @@ function LeafHeat({
         transform={`translate(${center.x},${center.y})`}
       />
       <text
-        onMouseOver={() => setHovered(true)}
-        onMouseOut={() => setHovered(false)}
+        onMouseOver={() => changeHovered(true)}
+        onMouseOut={() => changeHovered(false)}
         overflow={"hidden"}
       >
         <textPath
@@ -192,55 +202,56 @@ interface IHeatMapLeavesProps {
   arcWidth: number;
   nodeWidth: number;
 }
-function HeatMapLeaves({
-  leafNodes,
-  leafAngles,
-  selected,
-  depth,
-  center,
-  leafDistance,
-  arcWidth,
-  nodeWidth,
-}: IHeatMapLeavesProps) {
-  const minDistance = 0;
-  const maxDistance = 2 ** (depth - 1) - 1;
-  // Only for leaf nodes
-  const colorScale = d3
-    .scaleSequential(d3.interpolateReds)
-    .domain([minDistance, maxDistance]);
-  const dimensions = {
-    heat_innerRadius: 16,
-    node_innerRadius: leafDistance - nodeWidth,
-    heat_outerRadius: leafDistance + 16 + arcWidth,
-    node_outerRadius: leafDistance + nodeWidth,
-  };
+// function HeatMapLeaves({
+//   leafNodes,
+//   leafAngles,
+//   selected,
+//   depth,
+//   center,
+//   leafDistance,
+//   arcWidth,
+//   nodeWidth,
+// }: IHeatMapLeavesProps) {
+//   const minDistance = 0;
+//   const maxDistance = 2 ** (depth - 1) - 1;
+//   // Only for leaf nodes
+//   const colorScale = d3
+//     .scaleSequential(d3.interpolateReds)
+//     .domain([minDistance, maxDistance]);
+//   const dimensions = {
+//     heat_innerRadius: 16,
+//     node_innerRadius: leafDistance - nodeWidth,
+//     heat_outerRadius: leafDistance + 16 + arcWidth,
+//     node_outerRadius: leafDistance + nodeWidth,
+//   };
 
-  return leafNodes.map((node) => {
-    const nodeData = node.data;
-    const distance = calculateDistance(selected, nodeData.id);
-    const startAngle = leafAngles[nodeData.id].leftParentAngle;
-    const endAngle = leafAngles[nodeData.id].rightParentAngle;
-    return (
-      <LeafHeat
-        nodeData={nodeData}
-        distance={distance}
-        center={center}
-        colorScale={colorScale}
-        startAngle={startAngle}
-        endAngle={endAngle}
-        selected={selected}
-        dimensions={dimensions}
-        key={node.data.id}
-      />
-    );
-  });
-}
+//   return leafNodes.map((node) => {
+//     const nodeData = node.data;
+//     const distance = calculateDistance(selected, nodeData.id);
+//     const startAngle = leafAngles[nodeData.id].leftParentAngle;
+//     const endAngle = leafAngles[nodeData.id].rightParentAngle;
+//     return (
+//       <LeafHeat
+//         nodeData={nodeData}
+//         distance={distance}
+//         center={center}
+//         colorScale={colorScale}
+//         startAngle={startAngle}
+//         endAngle={endAngle}
+//         selected={selected}
+//         dimensions={dimensions}
+//         key={node.data.id}
+//       />
+//     );
+//   });
+// }
 
 export default function HeatMap({
   nodes,
   depth,
   selected,
   tooltip = "",
+  setHovered,
   radius = 2 ** (depth - 2) - 1,
 }: HeatMapProps) {
   const minDistance = 0;
@@ -382,6 +393,7 @@ export default function HeatMap({
                 node_outerRadius: leafDistance + nodeWidth,
               }}
               key={node.data.id}
+              setTooltip={setHovered}
             />
           );
         } else if (node.depth > 0) {
@@ -427,6 +439,7 @@ export default function HeatMap({
           heat_outerRadius: leafDistance + 16 + arcWidth,
           node_outerRadius: leafDistance + nodeWidth,
         }}
+        setTooltip={setHovered}
       />
       <LeafHeat
         nodeData={nodes[2].data}
@@ -442,6 +455,7 @@ export default function HeatMap({
           heat_outerRadius: leafDistance + 16 + arcWidth,
           node_outerRadius: leafDistance + nodeWidth,
         }}
+        setTooltip={setHovered}
       />
     </>
   ) : (

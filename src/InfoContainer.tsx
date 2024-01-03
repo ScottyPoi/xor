@@ -9,6 +9,7 @@ interface InfoContainerProps {
     y: number;
     id: string;
   } | null;
+  setTooltip: (id: string) => void;
   nodeB: {
     x: number;
     y: number;
@@ -86,6 +87,7 @@ export default function InfoContainer({
   depth,
   radius,
   setRadius,
+  setTooltip,
 }: InfoContainerProps) {
   const minDistance = 0;
   const maxDistance = 2 ** (depth - 1) - 1;
@@ -116,32 +118,35 @@ export default function InfoContainer({
           </tr>
           <tr>
             <th>Radius:</th>
-            <td>
-              2^{radius} -1 ({'d < '}{2 ** (radius) - 1})
+            <td style={{ fontSize: "x-large" }}>
+              2^{radius} -1 ({"d < "}
+              {2 ** radius - 1})
             </td>
           </tr>
           <tr>
             <td>
               <button
-              disabled={radius === 0}
-              onClick={() => setRadius((prev) => prev - 1)}
+                style={{ width: "100%", height: "50px" }}
+                disabled={radius === 0}
+                onClick={() => setRadius((prev) => prev - 1)}
               >
-              - Radius
+                - Radius
               </button>
             </td>
             <td>
               <button
-              onClick={() => setRadius((prev) => prev + 1)}
-              disabled={radius === depth - 1}
+                style={{ width: "100%", height: "50px" }}
+                onClick={() => setRadius((prev) => prev + 1)}
+                disabled={radius === depth - 1}
               >
-              + Radius
+                + Radius
               </button>
             </td>
           </tr>
           <tr
             style={{
               color: "white",
-              background: selected.endsWith("1") ? "#00f" : "#0f0",
+              background: selected.endsWith("1") ? "blue" : "green",
             }}
           >
             <th>Node_A:</th>
@@ -170,10 +175,12 @@ export default function InfoContainer({
                     const s = parseInt(selected.slice(2), 2);
                     const d = x ^ s;
                     const hex = padToEven(d.toString(16));
-                    const bin = d.toString(2);
+                    const bin = d.toString(2).padStart(depth - 1, '0');
                     return (
                       <>
-                        <tr>
+                        <tr
+                        onMouseOver={() => setTooltip('0b' + bin)}
+                        >
                           <th>{x}</th>
                           <td
                             style={{
@@ -189,7 +196,7 @@ export default function InfoContainer({
                           <td
                             style={{
                               color: "white",
-                              background: bin.endsWith("1") ? "#00f" : "#0f0",
+                              background: bin.endsWith("1") ? "blue" : "green",
                             }}
                           >
                             0x
