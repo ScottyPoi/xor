@@ -5,6 +5,7 @@ interface HeatMapProps {
   nodes: d3.HierarchyNode<ITreeNode>[];
   depth: number;
   selected: string;
+  radius?: number;
 }
 
 const calculateDistance = (first: string, second: string) => {
@@ -41,7 +42,7 @@ const fillColorByDistance = (
   return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
 };
 
-export default function HeatMap({ nodes, depth, selected }: HeatMapProps) {
+export default function HeatMap({ nodes, depth, selected, radius = 0 }: HeatMapProps) {
   const minDistance = 0;
   const maxDistance = 2 ** (depth - 1) - 1;
   const arcWidth = 20;

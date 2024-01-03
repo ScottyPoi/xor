@@ -85,56 +85,58 @@ export default function InfoContainer({
                 Distances:
                 <br />0 -- (2^{depth - 1} - 1)
               </th>
-              <td>
-                {Array.from(
-                  { length: Math.min(16, 2 ** (depth - 1)) },
-                  (_, i) =>
-                    i < Math.min(16, 2 ** (depth - 1)) / 2
-                      ? i
-                      : 2 ** (depth - 1) - Math.min(16, 2 ** (depth - 1)) + i
-                ).map((x) => {
-                  const s = parseInt(selected.slice(2), 2);
-                  const d = x ^ s;
-                  const hex = padToEven(d.toString(16));
-                  const bin = d.toString(2);
-                  return (
-                    <>
-                      <tr>
-                        <th>
-                          {x < Math.min(16, 2 ** depth - 1) / 2
-                            ? x
-                            : "2^" + (depth-1) + "-" + (2 ** depth - x)}
-                        </th>
-                        <td
-                          style={{
-                            color: "white",
-                            background: fillColorByDistance(
-                              colorScale,
-                              '0x' + x.toString(16)
-                            ),
-                          }}
-                        >
-                          ___
-                        </td>
-                        <td
-                          style={{
-                            color: "white",
-                            background: bin.endsWith("1") ? "#00f" : "#0f0",
-                          }}
-                        >
-                          0x
-                          {hex}
-                        </td>
-                      </tr>
-                      {x === Math.min(16, 2 ** depth - 1) / 2 - 1 && (
+              <div style={{ height: "300px", overflow: "auto" }}>
+                <td>
+                  {Array.from(
+                    { length: Math.min(16, 2 ** (depth - 1)) },
+                    (_, i) =>
+                      i < Math.min(16, 2 ** (depth - 1)) / 2
+                        ? i
+                        : 2 ** (depth - 1) - Math.min(16, 2 ** (depth - 1)) + i
+                  ).map((x) => {
+                    const s = parseInt(selected.slice(2), 2);
+                    const d = x ^ s;
+                    const hex = padToEven(d.toString(16));
+                    const bin = d.toString(2);
+                    return (
+                      <>
                         <tr>
-                          <th>. . .</th>
+                          <th>
+                            {x < Math.min(16, 2 ** depth - 1) / 2
+                              ? x
+                              : "2^" + (depth - 1) + "-" + (2 ** depth - x)}
+                          </th>
+                          <td
+                            style={{
+                              color: "white",
+                              background: fillColorByDistance(
+                                colorScale,
+                                "0x" + x.toString(16)
+                              ),
+                            }}
+                          >
+                            ___
+                          </td>
+                          <td
+                            style={{
+                              color: "white",
+                              background: bin.endsWith("1") ? "#00f" : "#0f0",
+                            }}
+                          >
+                            0x
+                            {hex}
+                          </td>
                         </tr>
-                      )}
-                    </>
-                  );
-                })}
-              </td>
+                        {x === Math.min(16, 2 ** depth - 1) / 2 - 1 && (
+                          <tr>
+                            <th>. . .</th>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
+                </td>
+              </div>
             </tr>
           )}
           {nodeB && nodeB.id && (
