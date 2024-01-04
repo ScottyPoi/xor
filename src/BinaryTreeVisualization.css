@@ -2,30 +2,42 @@
 
 .controls {
   display: flex;
+  /* direction: ; */
   align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* position: fixed; */
+  /* top: 0;
+  left: 0; */
   background-color: #eee;
-  padding: 10px;
+  padding: 1px;
   z-index: 1000;
 }
 
+.info-container table {
+  margin-left: 1em;
+  width: max-content;
+  height: max-content;
+  text-align: left;
+}
+
 .tree-container {
+  /* width: 100%; */
+  display: inline-flex;
   margin-top: 50px; /* Space for the header */
   height: calc(100vh - 50px); /* Full height minus header space */
   overflow: auto; /* Enables scroll */
   padding: 10px;
-  outline: 1px solid #F00;
+  outline: 1px solid #0F0;
   border: 1px solid #000;
   position: relative; /* For absolute positioning of tooltip */
 }
 
 .tree-svg {
-  display: flexbox; /* Fix for scrolling on svg elements */
+  display: flex; /* Fix for scrolling on svg elements */
   height: auto;
+  width: 100%; /* Add this line */
   outline: 1px solid #0FF;
-  padding: 10px
+  padding: 10px;
+  
 }
 
 .tooltip {
@@ -50,8 +62,8 @@
 }
 
 .button {
-  padding: 5px 10px;
-  margin-right: 10px;
+  padding: 1px;
+  margin-right: 1px;
 }
 
 .depth-input {
