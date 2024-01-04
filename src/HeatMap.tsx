@@ -1,14 +1,10 @@
 import * as d3 from "d3";
 import { ITreeNode } from "./types";
-import { useState } from "react";
+import { useContext } from "react";
+import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 
 interface HeatMapProps {
   nodes: d3.HierarchyNode<ITreeNode>[];
-  depth: number;
-  selected: string;
-  setHovered: (id: string) => void;
-  tooltip?: string;
-  radius?: number;
 }
 
 const calculateDistance = (first: string, second: string) => {
@@ -46,17 +42,12 @@ const fillColorByDistance = (
 };
 
 interface ILeafHeatProps {
-  selected: string;
-  tooltip?: boolean;
   nodeData: ITreeNode;
   distance: string;
-  center: { x: number; y: number; r?: number };
   startAngle: number;
   endAngle: number;
   colorScale: d3.ScaleSequential<string, never>;
   dimensions: ILeafHeatDimensions;
-  inRadius?: boolean;
-  setTooltip: (tooltipId: string) => void;
 }
 
 interface ILeafHeatDimensions {
@@ -66,14 +57,9 @@ interface ILeafHeatDimensions {
   node_outerRadius: number;
 }
 function LeafHeat({
-  selected,
-  tooltip,
-  setTooltip,
-  inRadius = true,
   nodeData,
   startAngle,
   endAngle,
-  center,
   colorScale,
   distance,
   dimensions: {
@@ -83,27 +69,32 @@ function LeafHeat({
     node_outerRadius,
   },
 }: ILeafHeatProps) {
-  const [hovered, setHovered] = useState(false);
+  const { state, dispatch } = useContext(BinaryTreeContext);
+  const inRadius = BigInt(distance) <= BigInt(2 ** state.radius - 1);
   // Only for leaf nodes
-  // const hovered = tooltip
-  const changeHovered = (hover: boolean) => {
-    setHovered(hover);
-    if (hover) {
-      setTooltip(nodeData.id);
-    }
-  }
+  const handleMouseOver = () => {
+    dispatch({
+      type: ActionTypes.SetTooltip,
+      payload: { id: nodeData.id, x: nodeData.x, y: nodeData.y },
+    });
+  };
+  const handleMouseOut = () => {
+    dispatch({ type: ActionTypes.SetTooltip, payload: null });
+  };
+
   const arcGenerator = d3.arc();
-  const depth = nodeData.id.length - 2;
-  const fontSize = tooltip
+  const hovered = state.tooltip?.id === nodeData.id;
+  const fontSize = hovered
     ? "7rem"
-    : depth < 4
+    : state.depth < 4
     ? "7rem"
-    : `${8 / ((depth - 3) * 2)}rem`;
+    : `${8 / ((state.depth - 3) * 2)}rem`;
+
   return (
     <>
       <path
-        onMouseOver={() => changeHovered(true)}
-        onMouseOut={() => changeHovered(false)}
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
         d={
           arcGenerator({
             innerRadius: heat_innerRadius,
@@ -114,11 +105,11 @@ function LeafHeat({
         }
         fill={fillColorByDistance(colorScale, distance)}
         opacity={0.75}
-        transform={`translate(${center.x},${center.y})`}
+        transform={`translate(${state.center.x},${state.center.y})`}
       />
       <path
-        onMouseOver={() => changeHovered(true)}
-        onMouseOut={() => changeHovered(false)}
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
         d={
           arcGenerator({
             innerRadius: node_innerRadius,
@@ -129,28 +120,12 @@ function LeafHeat({
         }
         fill={fillColorById(nodeData.id)}
         opacity={1}
-        transform={`translate(${center.x},${center.y})`}
+        transform={`translate(${state.center.x},${state.center.y})`}
       />
+
       <path
-        onMouseOver={() => changeHovered(true)}
-        onMouseOut={() => changeHovered(false)}
-        id={`${nodeData.id}Arc`}
-        d={
-          arcGenerator({
-            innerRadius: node_outerRadius,
-            outerRadius: heat_outerRadius + 16,
-            startAngle,
-            endAngle: (hovered || tooltip) ? endAngle + Math.PI : endAngle,
-          }) ?? undefined
-        }
-        fill={"none"}
-        opacity={1}
-        transform={`translate(${center.x},${center.y})`}
-      />
-      <path
-        onMouseOver={() => changeHovered(true)}
-        onMouseOut={() => changeHovered(false)}
-        id={`${nodeData.id}Arc`}
+        onMouseOver={() => handleMouseOver}
+        onMouseOut={() => handleMouseOut}
         d={
           arcGenerator({
             innerRadius: node_outerRadius,
@@ -161,248 +136,206 @@ function LeafHeat({
         }
         fill={inRadius ? "yellow" : "none"}
         opacity={1}
-        transform={`translate(${center.x},${center.y})`}
+        transform={`translate(${state.center.x},${state.center.y})`}
       />
-      <text
-        onMouseOver={() => changeHovered(true)}
-        onMouseOut={() => changeHovered(false)}
-        overflow={"hidden"}
-      >
+      <path
+        id={`${nodeData.id}Arc`}
+        d={
+          arcGenerator({
+            innerRadius: node_outerRadius,
+            outerRadius: heat_outerRadius + 16,
+            startAngle,
+            endAngle:
+              state.tooltip?.id === nodeData.id ? endAngle + Math.PI : endAngle,
+          }) ?? undefined
+        }
+        fill={"none"}
+        opacity={1}
+        transform={`translate(${state.center.x},${state.center.y})`}
+      />
+      <text overflow={"hidden"}>
         <textPath
+          onMouseOver={handleMouseOver}
+          onMouseOut={handleMouseOut}
           lengthAdjust={"spacing"}
           fontSize={fontSize}
           href={`#${nodeData.id}Arc`}
           opacity={1}
         >
-          {BigInt(distance).toString()}
+          {hovered
+            ? BigInt(distance).toString()
+            : `|_${BigInt(distance).toString().length === 1 ? "_" : ""}${BigInt(
+                distance
+              ).toString()}${
+                BigInt(distance).toString().length < 3 ? "_" : ""
+              }_`}
         </textPath>
       </text>
     </>
   );
 }
 
-// interface ILeafAngle {
-//   leftParent: d3.HierarchyNode<ITreeNode>;
-//   rightParent: d3.HierarchyNode<ITreeNode>;
-//   nodeAngle: number;
-//   leftParentAngle: number;
-//   rightParentAngle: number;
-// }
-// type LeafAngles = Record<string, ILeafAngle>;
-// interface IHeatMapLeavesProps {
-//   leafNodes: d3.HierarchyNode<ITreeNode>[]; // leaf nodes
-//   leafAngles: LeafAngles;
-//   selected: string; // binary string representing the selected node
-//   depth: number; // depth of the tree
-//   center: { x: number; y: number; r?: number };
-//   leafDistance: number;
-//   arcWidth: number;
-//   nodeWidth: number;
-// }
-// function HeatMapLeaves({
-//   leafNodes,
-//   leafAngles,
-//   selected,
-//   depth,
-//   center,
-//   leafDistance,
-//   arcWidth,
-//   nodeWidth,
-// }: IHeatMapLeavesProps) {
-//   const minDistance = 0;
-//   const maxDistance = 2 ** (depth - 1) - 1;
-//   // Only for leaf nodes
-//   const colorScale = d3
-//     .scaleSequential(d3.interpolateReds)
-//     .domain([minDistance, maxDistance]);
-//   const dimensions = {
-//     heat_innerRadius: 16,
-//     node_innerRadius: leafDistance - nodeWidth,
-//     heat_outerRadius: leafDistance + 16 + arcWidth,
-//     node_outerRadius: leafDistance + nodeWidth,
-//   };
+const getLeafAngles = (
+  node: d3.HierarchyNode<ITreeNode>,
+  center: { x: number; y: number }
+): [string, {
+  leftParent: d3.HierarchyNode<any>,
+  rightParent: d3.HierarchyNode<any>,
+  nodeAngle: number,
+  leftParentAngle: number,
+  rightParentAngle: number
+}] => {
+  const nodePos = node.data.id[node.data.id.length - 1];
+  let oppParent = node.parent ?? node;
+  while (oppParent.parent && oppParent.data.id.endsWith(nodePos)) {
+    oppParent = oppParent.parent;
+  }
+  let sameParent = node.parent ?? node;
+  while (sameParent.parent && !sameParent.data.id.endsWith(nodePos)) {
+    sameParent = sameParent.parent;
+  }
+  const leftParent =
+    nodePos === "1" ? node.parent! : oppParent!.parent ?? oppParent;
+  const rightParent =
+    nodePos === "0" ? node.parent! : oppParent.parent ?? oppParent;
 
-//   return leafNodes.map((node) => {
-//     const nodeData = node.data;
-//     const distance = calculateDistance(selected, nodeData.id);
-//     const startAngle = leafAngles[nodeData.id].leftParentAngle;
-//     const endAngle = leafAngles[nodeData.id].rightParentAngle;
-//     return (
-//       <LeafHeat
-//         nodeData={nodeData}
-//         distance={distance}
-//         center={center}
-//         colorScale={colorScale}
-//         startAngle={startAngle}
-//         endAngle={endAngle}
-//         selected={selected}
-//         dimensions={dimensions}
-//         key={node.data.id}
-//       />
-//     );
-//   });
-// }
-
-export default function HeatMap({
-  nodes,
-  depth,
-  selected,
-  tooltip = "",
-  setHovered,
-  radius = 2 ** (depth - 2) - 1,
-}: HeatMapProps) {
-  const minDistance = 0;
-  const maxDistance = 2 ** (depth - 1) - 1;
-  const arcWidth = 20;
-  const center = {
-    x: nodes[0].data.x,
-    y: nodes[0].data.y,
+  const leftParentPosition = {
+    x: leftParent.data.x,
+    y: leftParent.data.y,
   };
+  const rightParentPosition = {
+    x: rightParent.data.x,
+    y: rightParent.data.y,
+  };
+  const nodeAngle =
+    Math.PI / 2 + Math.atan2(node.data.y - center.y, node.data.x - center.x);
+  let leftParentAngle =
+    Math.PI / 2 +
+    Math.atan2(
+      leftParentPosition.y - center.y,
+      leftParentPosition.x - center.x
+    );
+  let rightParentAngle =
+    Math.PI / 2 +
+    Math.atan2(
+      rightParentPosition.y - center.y,
+      rightParentPosition.x - center.x
+    );
+  leftParentAngle =
+    leftParentAngle === Math.PI / 2
+      ? Math.round(rightParentAngle) === 2
+        ? Math.PI / 2
+        : Math.round(rightParentAngle) === 0
+        ? 0
+        : Math.round(rightParentAngle) === -2
+        ? -2 * Math.PI +
+          nodeAngle -
+          (rightParentAngle - (-2 * Math.PI + nodeAngle))
+        : nodeAngle - (rightParentAngle - nodeAngle)
+      : leftParentAngle;
+
+  rightParentAngle =
+    rightParentAngle === Math.PI / 2
+      ? Math.round(leftParentAngle) === 2
+        ? nodeAngle + (nodeAngle - leftParentAngle)
+        : Math.round(leftParentAngle) === 0
+        ? 0
+        : Math.round(leftParentAngle) === -2
+        ? -Math.PI / 2
+        : Math.PI
+      : rightParentAngle;
+
+  if (leftParentAngle > rightParentAngle) {
+    leftParentAngle -= Math.PI * 2;
+  }
+  if (rightParentAngle === Math.PI) {
+    rightParentAngle = nodeAngle + (nodeAngle - leftParentAngle);
+  }
+
+  return [
+    node.data.id,
+    {
+      leftParent,
+      rightParent,
+      nodeAngle,
+      leftParentAngle,
+      rightParentAngle,
+    },
+  ];
+};
+
+
+export default function HeatMap({ nodes }: HeatMapProps) {
+  const { state } = useContext(BinaryTreeContext);
+  
+  const minDistance = 0;
+  const maxDistance = 2 ** (state.depth - 1) - 1;
+  const arcWidth = 20;
   const nodeWidth = 16;
-  const leafNodes = nodes.slice(2 ** (depth - 1) - 1, 2 ** depth - 1);
+
+  const leafNodes = nodes.slice(
+    2 ** (state.depth - 1) - 1,
+    2 ** state.depth - 1
+  );
   const leafAngles = Object.fromEntries(
     leafNodes.map((node) => {
-      const nodePos = node.data.id[node.data.id.length - 1];
-      let oppParent = node.parent ?? node;
-      while (oppParent.parent && oppParent.data.id.endsWith(nodePos)) {
-        oppParent = oppParent.parent;
-      }
-      let sameParent = node.parent ?? node;
-      while (sameParent.parent && !sameParent.data.id.endsWith(nodePos)) {
-        sameParent = sameParent.parent;
-      }
-      const leftParent =
-        nodePos === "1" ? node.parent! : oppParent!.parent ?? oppParent;
-      const rightParent =
-        nodePos === "0" ? node.parent! : oppParent.parent ?? oppParent;
-
-      const leftParentPosition = {
-        x: leftParent.data.x,
-        y: leftParent.data.y,
-      };
-      const rightParentPosition = {
-        x: rightParent.data.x,
-        y: rightParent.data.y,
-      };
-      const nodeAngle =
-        Math.PI / 2 +
-        Math.atan2(node.data.y - center.y, node.data.x - center.x);
-      let leftParentAngle =
-        Math.PI / 2 +
-        Math.atan2(
-          leftParentPosition.y - center.y,
-          leftParentPosition.x - center.x
-        );
-      let rightParentAngle =
-        Math.PI / 2 +
-        Math.atan2(
-          rightParentPosition.y - center.y,
-          rightParentPosition.x - center.x
-        );
-      leftParentAngle =
-        leftParentAngle === Math.PI / 2
-          ? Math.round(rightParentAngle) === 2
-            ? Math.PI / 2
-            : Math.round(rightParentAngle) === 0
-            ? 0
-            : Math.round(rightParentAngle) === -2
-            ? -2 * Math.PI +
-              nodeAngle -
-              (rightParentAngle - (-2 * Math.PI + nodeAngle))
-            : nodeAngle - (rightParentAngle - nodeAngle)
-          : leftParentAngle;
-
-      rightParentAngle =
-        rightParentAngle === Math.PI / 2
-          ? Math.round(leftParentAngle) === 2
-            ? nodeAngle + (nodeAngle - leftParentAngle)
-            : Math.round(leftParentAngle) === 0
-            ? 0
-            : Math.round(leftParentAngle) === -2
-            ? -Math.PI / 2
-            : Math.PI
-          : rightParentAngle;
-
-      if (leftParentAngle > rightParentAngle) {
-        leftParentAngle -= Math.PI * 2;
-      }
-      if (rightParentAngle === Math.PI) {
-        rightParentAngle = nodeAngle + (nodeAngle - leftParentAngle);
-      }
-
-      return [
-        node.data.id,
-        {
-          leftParent,
-          rightParent,
-          nodeAngle,
-          leftParentAngle,
-          rightParentAngle,
-        },
-      ];
+      return getLeafAngles(node, { x: state.center.x, y: state.center.y });
     })
   );
-  console.log(leafAngles);
-  for (const [node, angles] of Object.entries(leafAngles).slice(-10)) {
-    const L = angles.leftParentAngle.toFixed(3);
-    const R = angles.rightParentAngle.toFixed(3);
-    console.log(node, L, R);
-  }
-  // const firstLeafNode = nodes[2 ** (depth - 1) - 1];
-  // const lastLeafNode = nodes.slice(-1)[0];
-  // console.log({ firstLeafNode, lastLeafNode });
+  
   const leafPosition = {
     x: nodes[nodes.length - 1].data.x,
     y: nodes[nodes.length - 1].data.y,
   };
   const leafDistance = Math.sqrt(
-    (center.x - leafPosition.x) ** 2 + (center.y - leafPosition.y) ** 2
+    (state.center.x - leafPosition.x) ** 2 +
+      (state.center.y - leafPosition.y) ** 2
   );
   const colorScale = d3
     .scaleSequential(d3.interpolateReds)
     .domain([minDistance, maxDistance]);
 
+  const dimensions = {
+    heat_innerRadius: 16,
+    node_innerRadius: leafDistance - nodeWidth,
+    heat_outerRadius: leafDistance + 16 + arcWidth,
+    node_outerRadius: leafDistance + nodeWidth,
+  };
   return nodes.length > 3 ? (
     <>
       {nodes.slice().map((node) => {
         const nodeData = node.data;
-        if (node.depth === depth - 1) {
+        if (node.depth === state.depth - 1) {
           // Only for leaf nodes
-          const distance = calculateDistance(selected, nodeData.id);
+          const distance = calculateDistance(state.selected, nodeData.id);
           const startAngle = leafAngles[nodeData.id].leftParentAngle;
           const endAngle = leafAngles[nodeData.id].rightParentAngle;
-          console.log({ startAngle, endAngle });
+
           return (
             <LeafHeat
               nodeData={nodeData}
               distance={distance}
-              center={center}
               colorScale={colorScale}
               startAngle={startAngle}
               endAngle={endAngle}
-              selected={selected}
-              inRadius={BigInt(distance) <= BigInt(2 ** (radius) - 1)}
-              tooltip={tooltip === node.data.id}
-              dimensions={{
-                heat_innerRadius: 16,
-                node_innerRadius: leafDistance - nodeWidth,
-                heat_outerRadius: leafDistance + 16 + arcWidth,
-                node_outerRadius: leafDistance + nodeWidth,
-              }}
+              dimensions={dimensions}
               key={node.data.id}
-              setTooltip={setHovered}
             />
           );
         } else if (node.depth > 0) {
           // radial angle relative to center node
           const nodeAngle = Math.atan2(
-            node.data.y - center.y,
-            node.data.x - center.x
+            node.data.y - state.center.y,
+            node.data.x - state.center.x
           );
           // point at leaf distance at nodeAngle
           const nodeCoordinate = {
-            x: center.x + (leafDistance + arcWidth + 16) * Math.cos(nodeAngle),
-            y: center.y + (leafDistance + arcWidth + 16) * Math.sin(nodeAngle),
+            x:
+              state.center.x +
+              (leafDistance + arcWidth + 16) * Math.cos(nodeAngle),
+            y:
+              state.center.y +
+              (leafDistance + arcWidth + 16) * Math.sin(nodeAngle),
           };
 
           return (
@@ -421,38 +354,23 @@ export default function HeatMap({
       })}
     </>
   ) : nodes.length === 3 ? (
+    // Special case for 2 leaf nodes
     <>
       <LeafHeat
         nodeData={nodes[1].data}
-        center={center}
         startAngle={-Math.PI / 2}
         endAngle={0}
-        selected={selected}
-        distance={selected === nodes[1].data.id ? "0x00" : "0x01"}
+        distance={state.selected === nodes[1].data.id ? "0x00" : "0x01"}
         colorScale={colorScale}
-        dimensions={{
-          heat_innerRadius: 16,
-          node_innerRadius: leafDistance - nodeWidth,
-          heat_outerRadius: leafDistance + 16 + arcWidth,
-          node_outerRadius: leafDistance + nodeWidth,
-        }}
-        setTooltip={setHovered}
+        dimensions={dimensions}
       />
       <LeafHeat
         nodeData={nodes[2].data}
-        center={center}
         startAngle={0}
         endAngle={Math.PI / 2}
-        selected={selected}
-        distance={selected === nodes[2].data.id ? "0x00" : "0x01"}
+        distance={state.selected === nodes[2].data.id ? "0x00" : "0x01"}
         colorScale={colorScale}
-        dimensions={{
-          heat_innerRadius: 16,
-          node_innerRadius: leafDistance - nodeWidth,
-          heat_outerRadius: leafDistance + 16 + arcWidth,
-          node_outerRadius: leafDistance + nodeWidth,
-        }}
-        setTooltip={setHovered}
+        dimensions={dimensions}
       />
     </>
   ) : (

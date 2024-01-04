@@ -2,10 +2,11 @@
 
 .controls {
   display: flex;
+  /* direction: ; */
   align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
+  /* position: fixed; */
+  /* top: 0;
+  left: 0; */
   background-color: #eee;
   padding: 1px;
   z-index: 1000;

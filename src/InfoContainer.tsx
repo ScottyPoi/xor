@@ -1,24 +1,8 @@
-import { Dispatch, SetStateAction } from "react";
+import { useContext } from "react";
 import { padToEven } from "./treeUtils";
 import * as d3 from "d3";
-
-interface InfoContainerProps {
-  selected: string;
-  tooltip: {
-    x: number;
-    y: number;
-    id: string;
-  } | null;
-  setTooltip: (id: string) => void;
-  nodeB: {
-    x: number;
-    y: number;
-    id: string;
-  } | null;
-  depth: number;
-  radius: number;
-  setRadius: Dispatch<SetStateAction<number>>;
-}
+import Header from "./Header";
+import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 
 const fillColorByDistance = (
   colorScale: d3.ScaleSequential<string, never>,
@@ -27,108 +11,68 @@ const fillColorByDistance = (
   return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
 };
 
-// const colorGradientByDistance = (
-//   depth: number,
-//   selected: string,
-//   colorScale: d3.ScaleSequential<string, never>
-// ) => {
-//   return Array.from({ length: Math.min(32, 2 ** (depth - 1)) }, (_, i) =>
-//     i < Math.min(32, 2 ** (depth - 1)) / 2
-//       ? i
-//       : 2 ** (depth - 1) - Math.min(32, 2 ** (depth - 1)) + i
-//   ).map((x) => {
-//     const s = parseInt(selected.slice(2), 2);
-//     const d = x ^ s;
-//     const hex = padToEven(d.toString(16));
-//     const bin = d.toString(2);
-//     return (
-//       <>
-//         <tr>
-//           <th>
-//             {x < Math.min(32, 2 ** depth - 1) / 2
-//               ? x
-//               : "2^" + (depth - 1) + "-" + (2 ** depth - x)}
-//           </th>
-//           <td
-//             style={{
-//               color: "white",
-//               background: fillColorByDistance(
-//                 colorScale,
-//                 "0x" + x.toString(16)
-//               ),
-//             }}
-//           >
-//             ___
-//           </td>
-//           <td
-//             style={{
-//               color: "white",
-//               background: bin.endsWith("1") ? "#00f" : "#0f0",
-//             }}
-//           >
-//             0x
-//             {hex}
-//           </td>
-//         </tr>
-//         {x === Math.min(32, 2 ** depth - 1) / 2 - 1 && (
-//           <tr>
-//             <th>. . .</th>
-//           </tr>
-//         )}
-//       </>
-//     );
-//   });
-// };
-
-export default function InfoContainer({
-  selected,
-  tooltip,
-  nodeB,
-  depth,
-  radius,
-  setRadius,
-  setTooltip,
-}: InfoContainerProps) {
+export default function InfoContainer() {
+  const { state, dispatch } = useContext(BinaryTreeContext);
   const minDistance = 0;
-  const maxDistance = 2 ** (depth - 1) - 1;
+  const maxDistance = 2 ** (state.depth - 1) - 1;
   const colorScale = d3
     .scaleSequential(d3.interpolateReds)
     .domain([minDistance, maxDistance]);
   // const swatches = Math.min(32, 2 ** (depth - 1));
-  const swatches = 2 ** (depth - 1);
+  const swatches = 2 ** (state.depth - 1);
+  const handleMouseOver = (id: string) => {
+    dispatch({ type: ActionTypes.SetTooltip, payload: { id, x: 0, y: 0 } });
+  };
+  const handleMouseOut = () => {
+    dispatch({ type: ActionTypes.SetTooltip, payload: null });
+  };
+  const setRadius = (radius: number) => {
+    dispatch({ type: ActionTypes.SetRadius, payload: radius });
+  };
+  const increaseRadius = () => {
+    if (state.radius + 1 >= state.depth) return;
+    setRadius(state.radius + 1);
+  };
+  const decreaseRadius = () => {
+    if (state.radius - 1 < 0) return;
+    setRadius(state.radius - 1);
+  };
+
   return (
     <div className="info-container">
+      <Header />
       <table>
         <tbody>
           <tr>
             <th>
-              {tooltip && tooltip.id
-                ? tooltip.id + "_".repeat(depth + 1 - tooltip.id.length)
-                : "_".repeat(depth + 2)}{" "}
+              {state.tooltip && state.tooltip.id
+                ? state.tooltip.id +
+                  "_".repeat(state.depth + 3 - state.tooltip.id.length)
+                : "_".repeat(state.depth + 2)}{" "}
             </th>
             <td>{"---"}</td>
           </tr>
           <tr>
             <th>Depth:</th>
-            <td>{depth - 1}</td>
+            <td>{state.depth - 1}</td>
           </tr>
           <tr>
             <th>Leaves:</th>
-            <td>{2 ** (depth - 1)}</td>
+            <td>{2 ** (state.depth - 1)}</td>
           </tr>
           <tr>
             <th>Radius:</th>
             <td style={{ fontSize: "x-large" }}>
-              2^{radius} -1 ({"d < "}
-              {2 ** radius - 1})
+              2^{state.radius} -1 ({"d < "}
+              {2 ** state.radius - 1})
             </td>
           </tr>
           <tr>
             <td>
               <button
                 style={{ width: "100%", height: "50px" }}
-                disabled={radius === 0}
-                onClick={() => setRadius((prev) => prev - 1)}
+                disabled={state.radius === 0}
+                onClick={decreaseRadius}
               >
                 - Radius
               </button>
@@ -136,8 +80,8 @@ export default function InfoContainer({
             <td>
               <button
                 style={{ width: "100%", height: "50px" }}
-                onClick={() => setRadius((prev) => prev + 1)}
-                disabled={radius === depth - 1}
+                onClick={increaseRadius}
+                disabled={state.radius === state.depth - 1}
               >
                 + Radius
               </button>
@@ -146,40 +90,42 @@ export default function InfoContainer({
           <tr
             style={{
               color: "white",
-              background: selected.endsWith("1") ? "blue" : "green",
+              background: state.selected.endsWith("1") ? "blue" : "green",
             }}
           >
             <th>Node_A:</th>
             <td>
               <tr>
                 <th>binary:</th>
-                <td>{selected}</td>
+                <td>{state.selected}</td>
               </tr>
               <tr>
                 <th>hex_id:</th>
                 <td>
-                  0x{padToEven(parseInt(selected.slice(2), 2).toString(16))}
+                  0x
+                  {padToEven(parseInt(state.selected.slice(2), 2).toString(16))}
                 </td>
               </tr>
             </td>
           </tr>
-          {selected && (
+          {state.selected && (
             <tr>
               <th style={{ textAlign: "center" }}>
                 Distances:
-                <br />0 -- {2 ** (depth - 1) - 1}
+                <br />0 -- {2 ** (state.depth - 1) - 1}
               </th>
               <div style={{ maxHeight: 780, overflow: "auto" }}>
                 <td>
                   {Array.from({ length: swatches }, (_, i) => i).map((x) => {
-                    const s = parseInt(selected.slice(2), 2);
+                    const s = parseInt(state.selected.slice(2), 2);
                     const d = x ^ s;
                     const hex = padToEven(d.toString(16));
-                    const bin = d.toString(2).padStart(depth - 1, '0');
+                    const bin = d.toString(2).padStart(state.depth - 1, "0");
                     return (
                       <>
                         <tr
-                        onMouseOver={() => setTooltip('0b' + bin)}
+                          onMouseOut={handleMouseOut}
+                          onMouseOver={() => handleMouseOver("0b" + bin)}
                         >
                           <th>{x}</th>
                           <td
@@ -210,7 +156,7 @@ export default function InfoContainer({
               </div>
             </tr>
           )}
-          {nodeB && nodeB.id && (
+          {/* {nodeB && nodeB.id && (
             <tr>
               <th>Node_B:</th>
               <td>
@@ -236,10 +182,10 @@ export default function InfoContainer({
               <th>Distance:</th>
               <td>
                 {parseInt(nodeB.id.slice(2), 2) ^
-                  parseInt(selected.slice(2), 2)}
+                  parseInt(state.selected.slice(2), 2)}
               </td>
             </tr>
-          )}
+          )} */}
 
           {/* Add more rows as needed */}
         </tbody>
