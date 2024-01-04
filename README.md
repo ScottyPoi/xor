@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+# Binary Tree Visualization
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a React application. It's written in TypeScript and uses D3 for the visualizations.
 
-## Available Scripts
+## Goal
 
-In the project directory, you can run:
+The goal of the project is to offer insight into the concept of **location** and **distance** within a Distributed Hash-Table (DHT).
 
-### `npm start`
+The application visualizes the keyspace of a DHT as a binary tree, and demonstrates the concepts of **location** and **distance** through interactive visualizations.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Project Structure
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The main components of the application are:
 
-### `npm test`
+- `App.tsx`: This is the main component that wraps the application in an `ErrorBoundary` and a `BinaryTreeProvider`.
+- `BinaryTreeProvider.tsx`: This component provides context for the binary tree data that is used throughout the application.
+- `BinaryTreeVisualization.tsx`: This component is responsible for the visual representation of the binary tree.
+- `TreeNode.tsx`: This component represents a single node in the binary tree.
+- `HeatMap.tsx`: This component demonstrates **distance** with a heat map overlay.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+To get started with this project, follow these steps:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```sh
+git clone https://github.com/ScottyPoi/binary-tree-visualization.git
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Navigate into the project directory:
 
-### `npm run eject`
+```sh
+cd binary-tree-visualization
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. Install the dependencies:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```sh
+npm i
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1. Start the application:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```sh
+npm start
+```
+The application will start and can be accessed at http://localhost:3000.
 
-## Learn More
+## Building
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To build the project for production, use the following command:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+npm run build
+
+The built files will be in the build directory.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
