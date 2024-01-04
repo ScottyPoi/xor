@@ -27,58 +27,58 @@ const fillColorByDistance = (
   return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
 };
 
-const colorGradientByDistance = (
-  depth: number,
-  selected: string,
-  colorScale: d3.ScaleSequential<string, never>
-) => {
-  return Array.from({ length: Math.min(32, 2 ** (depth - 1)) }, (_, i) =>
-    i < Math.min(32, 2 ** (depth - 1)) / 2
-      ? i
-      : 2 ** (depth - 1) - Math.min(32, 2 ** (depth - 1)) + i
-  ).map((x) => {
-    const s = parseInt(selected.slice(2), 2);
-    const d = x ^ s;
-    const hex = padToEven(d.toString(16));
-    const bin = d.toString(2);
-    return (
-      <>
-        <tr>
-          <th>
-            {x < Math.min(32, 2 ** depth - 1) / 2
-              ? x
-              : "2^" + (depth - 1) + "-" + (2 ** depth - x)}
-          </th>
-          <td
-            style={{
-              color: "white",
-              background: fillColorByDistance(
-                colorScale,
-                "0x" + x.toString(16)
-              ),
-            }}
-          >
-            ___
-          </td>
-          <td
-            style={{
-              color: "white",
-              background: bin.endsWith("1") ? "#00f" : "#0f0",
-            }}
-          >
-            0x
-            {hex}
-          </td>
-        </tr>
-        {x === Math.min(32, 2 ** depth - 1) / 2 - 1 && (
-          <tr>
-            <th>. . .</th>
-          </tr>
-        )}
-      </>
-    );
-  });
-};
+// const colorGradientByDistance = (
+//   depth: number,
+//   selected: string,
+//   colorScale: d3.ScaleSequential<string, never>
+// ) => {
+//   return Array.from({ length: Math.min(32, 2 ** (depth - 1)) }, (_, i) =>
+//     i < Math.min(32, 2 ** (depth - 1)) / 2
+//       ? i
+//       : 2 ** (depth - 1) - Math.min(32, 2 ** (depth - 1)) + i
+//   ).map((x) => {
+//     const s = parseInt(selected.slice(2), 2);
+//     const d = x ^ s;
+//     const hex = padToEven(d.toString(16));
+//     const bin = d.toString(2);
+//     return (
+//       <>
+//         <tr>
+//           <th>
+//             {x < Math.min(32, 2 ** depth - 1) / 2
+//               ? x
+//               : "2^" + (depth - 1) + "-" + (2 ** depth - x)}
+//           </th>
+//           <td
+//             style={{
+//               color: "white",
+//               background: fillColorByDistance(
+//                 colorScale,
+//                 "0x" + x.toString(16)
+//               ),
+//             }}
+//           >
+//             ___
+//           </td>
+//           <td
+//             style={{
+//               color: "white",
+//               background: bin.endsWith("1") ? "#00f" : "#0f0",
+//             }}
+//           >
+//             0x
+//             {hex}
+//           </td>
+//         </tr>
+//         {x === Math.min(32, 2 ** depth - 1) / 2 - 1 && (
+//           <tr>
+//             <th>. . .</th>
+//           </tr>
+//         )}
+//       </>
+//     );
+//   });
+// };
 
 export default function InfoContainer({
   selected,

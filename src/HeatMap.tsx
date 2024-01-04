@@ -1,6 +1,5 @@
 import * as d3 from "d3";
 import { ITreeNode } from "./types";
-import { padToEven } from "./treeUtils";
 import { useState } from "react";
 
 interface HeatMapProps {
@@ -94,7 +93,6 @@ function LeafHeat({
     }
   }
   const arcGenerator = d3.arc();
-  const midAngle = (startAngle + endAngle) / 2;
   const depth = nodeData.id.length - 2;
   const fontSize = tooltip
     ? "7rem"
@@ -183,25 +181,24 @@ function LeafHeat({
   );
 }
 
-interface ILeafAngle {
-  leftParent: d3.HierarchyNode<ITreeNode>;
-  rightParent: d3.HierarchyNode<ITreeNode>;
-  nodeAngle: number;
-  leftParentAngle: number;
-  rightParentAngle: number;
-}
-
-type LeafAngles = Record<string, ILeafAngle>;
-interface IHeatMapLeavesProps {
-  leafNodes: d3.HierarchyNode<ITreeNode>[]; // leaf nodes
-  leafAngles: LeafAngles;
-  selected: string; // binary string representing the selected node
-  depth: number; // depth of the tree
-  center: { x: number; y: number; r?: number };
-  leafDistance: number;
-  arcWidth: number;
-  nodeWidth: number;
-}
+// interface ILeafAngle {
+//   leftParent: d3.HierarchyNode<ITreeNode>;
+//   rightParent: d3.HierarchyNode<ITreeNode>;
+//   nodeAngle: number;
+//   leftParentAngle: number;
+//   rightParentAngle: number;
+// }
+// type LeafAngles = Record<string, ILeafAngle>;
+// interface IHeatMapLeavesProps {
+//   leafNodes: d3.HierarchyNode<ITreeNode>[]; // leaf nodes
+//   leafAngles: LeafAngles;
+//   selected: string; // binary string representing the selected node
+//   depth: number; // depth of the tree
+//   center: { x: number; y: number; r?: number };
+//   leafDistance: number;
+//   arcWidth: number;
+//   nodeWidth: number;
+// }
 // function HeatMapLeaves({
 //   leafNodes,
 //   leafAngles,

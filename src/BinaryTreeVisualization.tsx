@@ -52,6 +52,7 @@ const BinaryTreeVisualization: React.FC = () => {
       const newDepth = Math.max(1, Math.min(16, Number(event.target.value)));
       changeDepth(newDepth);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [setDepth]
   );
 
