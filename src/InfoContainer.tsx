@@ -37,40 +37,78 @@ export default function InfoContainer() {
     if (state.radius - 1 < 0) return;
     setRadius(state.radius - 1);
   };
+  const changeDepth = (newDepth: number) => {
+    dispatch({ type: ActionTypes.ChangeDepth, payload: newDepth });
+  };
+  const incrementDepth = () => {
+    if (state.depth > 16) return;
+    changeDepth(state.depth + 1);
+  };
+  const decrementDepth = () => {
+    if (state.depth < 1) return;
+    changeDepth(state.depth - 1);
+  };
 
   return (
     <div className="info-container">
-      <Header />
       <table>
         <tbody>
           <tr>
             <th>
               {state.tooltip && state.tooltip.id
                 ? state.tooltip.id +
-                  "_".repeat(state.depth + 3 - state.tooltip.id.length)
+                  "_".repeat(state.depth + 1 - state.tooltip.id.length)
                 : "_".repeat(state.depth + 2)}{" "}
             </th>
             <td>{"---"}</td>
           </tr>
-          <tr>
+          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
             <th>Depth:</th>
             <td>{state.depth - 1}</td>
           </tr>
           <tr>
-            <th>Leaves:</th>
-            <td>{2 ** (state.depth - 1)}</td>
+            <td>
+              <button
+                style={{ width: "160px", height: "50px" }}
+                disabled={state.depth <= 1}
+                onClick={decrementDepth}
+              >
+                - Depth
+              </button>
+            </td>
+            <td>
+              <button
+                style={{ width: "160px", height: "50px" }}
+                onClick={incrementDepth}
+                disabled={state.depth > 16}
+              >
+                + Depth
+              </button>
+            </td>
           </tr>
-          <tr>
+          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
+            <th>Leaves: </th>
+            <td>2^{state.depth - 1}</td>
+          </tr>
+          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
+            <th></th>
+            <td>({2 ** (state.depth - 1)})</td>
+          </tr>
+          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
             <th>Radius:</th>
-            <td style={{ fontSize: "x-large" }}>
-              2^{state.radius} -1 ({"d < "}
+            <td>2^{state.radius} - 1</td>
+          </tr>
+          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
+            <th>{}</th>
+            <td>
+              ({"d < "}
               {2 ** state.radius - 1})
             </td>
           </tr>
           <tr>
             <td>
               <button
-                style={{ width: "100%", height: "50px" }}
+                style={{ width: "160px", height: "50px" }}
                 disabled={state.radius === 0}
                 onClick={decreaseRadius}
               >
@@ -79,7 +117,7 @@ export default function InfoContainer() {
             </td>
             <td>
               <button
-                style={{ width: "100%", height: "50px" }}
+                style={{ width: "160px", height: "50px" }}
                 onClick={increaseRadius}
                 disabled={state.radius === state.depth - 1}
               >

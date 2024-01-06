@@ -10,9 +10,9 @@ interface ITreeNode {
 export const generateTreeData = (
   depth: number,
   width: number,
-  height: number
+  center: { x: number; y: number }
 ): ITreeNode => {
-  const rootNodePosition = { x: width * 1.2 / 2, y: height * 1.1 / 2 };
+  const rootNodePosition = center;
   const root: ITreeNode = { id: "0b", ...rootNodePosition, angle: 0 };
 
   const addChildren = (node: ITreeNode, level: number, angleRange: number) => {

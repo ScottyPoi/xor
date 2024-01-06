@@ -49,7 +49,7 @@ type BinaryTreeContextState = {
 };
 
 const initialState: BinaryTreeContextState = {
-  depth: 0,
+  depth: 1,
   selected: "",
   tooltip: null,
   radius: 0,

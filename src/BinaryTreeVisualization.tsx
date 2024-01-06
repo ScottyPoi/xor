@@ -9,16 +9,27 @@ import TreeNode, { NodeLink } from "./TreeNode";
 import InfoContainer from "./InfoContainer";
 import HeatMap from "./HeatMap";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import TreeMsg from "./TreeMsg";
 
 const BinaryTreeVisualization: React.FC = () => {
   const { state, dispatch } = React.useContext(BinaryTreeContext);
   const svgRef = useRef<SVGSVGElement>(null);
   const { width, height } = useWindowSize(); // Use our custom hook
 
+  useEffect(() => {
+    dispatch({
+      type: ActionTypes.SetCenter,
+      payload: {
+        x: ((width - 400) / 2) + 400,
+        y: (height) * 0.6,
+      },
+    });
+  }, [width, height, state.depth, dispatch]);
+
   // useMemo to memoize the tree data based on the depth and dimensions
   const treeData = useMemo(
-    () => generateTreeData(state.depth, width, height),
-    [state.depth, width, height]
+    () => generateTreeData(state.depth, width, state.center),
+    [state.depth, state.center, width]
   );
 
   const root = d3.hierarchy(treeData);
@@ -47,13 +58,19 @@ const BinaryTreeVisualization: React.FC = () => {
   }, [nodes]);
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100%"
+      }}
+    >
+      <InfoContainer />
       <div className="tree-container">
-        <InfoContainer />
         <svg
           ref={svgRef}
           width={width * 1.2}
-          height={height}
+          height={height * 1.4}
           className="tree-svg"
         >
           {links.map((linkData, index) => (
@@ -66,6 +83,9 @@ const BinaryTreeVisualization: React.FC = () => {
             <TreeNode key={nodeData.id} treeNode={nodeData} />
           ))}
         </svg>
+      </div>
+      <div>
+        <TreeMsg />
       </div>
     </div>
   );

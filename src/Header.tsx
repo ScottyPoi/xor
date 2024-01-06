@@ -30,7 +30,7 @@ export default function Header() {
           fontSize: "x-large",
         }}
       >
-        Depth: {state.depth}
+        Depth: {state.depth - 1}
       </span>
     </div>
   );
