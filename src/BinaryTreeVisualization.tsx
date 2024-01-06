@@ -13,15 +13,15 @@ import TreeMsg from "./TreeMsg";
 
 const BinaryTreeVisualization: React.FC = () => {
   const { state, dispatch } = React.useContext(BinaryTreeContext);
-  const svgRef = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const { width, height } = useWindowSize(); // Use our custom hook
 
   useEffect(() => {
     dispatch({
       type: ActionTypes.SetCenter,
       payload: {
-        x: ((width - 400) / 2) + 400,
-        y: (height) * 0.6,
+        x: (width - 400) / 2 + 400,
+        y: height * 0.6,
       },
     });
   }, [width, height, state.depth, dispatch]);
@@ -62,17 +62,12 @@ const BinaryTreeVisualization: React.FC = () => {
       style={{
         display: "flex",
         height: "100vh",
-        width: "100%"
+        width: "100%",
       }}
     >
       <InfoContainer />
       <div className="tree-container">
-        <svg
-          ref={svgRef}
-          width={width * 1.2}
-          height={height * 1.4}
-          className="tree-svg"
-        >
+        <svg ref={svgRef} className="tree-svg">
           {links.map((linkData, index) => (
             <NodeLink key={index} linkData={linkData} />
           ))}
