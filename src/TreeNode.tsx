@@ -51,9 +51,9 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
       r={
         state.tooltip?.id === nodeData.id
           ? 16
-          : state.selected
+          : state.selected === nodeData.id
           ? 16
-          : Math.max(1, 16 - treeNode.depth)
+          : Math.max(1, 16 - treeNode.depth*1.5)
       } // Specify the radius of the circle
       fill={
         // "#aaf"

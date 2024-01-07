@@ -17,13 +17,30 @@ const BinaryTreeVisualization: React.FC = () => {
   const { width, height } = useWindowSize(); // Use our custom hook
 
   useEffect(() => {
-    dispatch({
-      type: ActionTypes.SetCenter,
-      payload: {
-        x: (width - 400) / 2 + 400,
-        y: height * 0.6,
-      },
-    });
+    if (svgRef.current) {
+      const svg = d3.select(svgRef.current as SVGSVGElement);
+      const svgCurrentCoordinates = {
+        x: Number(svg.attr("data-center-x")),
+        y: Number(svg.attr("data-center-y")),
+      };
+      const svgCurrentSize = {
+        width: Number(svg.attr("width")),
+        height: Number(svg.attr("height")),
+      };
+      const svgCurrentCenter = {
+        x: svgCurrentCoordinates.x + svgCurrentSize.width,
+        y: svgCurrentCoordinates.y + svgCurrentSize.height / 2,
+      };
+      const center = {
+        x: width / 2,
+        y: height * 0.6
+      }
+
+      dispatch({
+        type: ActionTypes.SetCenter,
+        payload: center,
+      });
+    }
   }, [width, height, state.depth, dispatch]);
 
   // useMemo to memoize the tree data based on the depth and dimensions
@@ -38,17 +55,17 @@ const BinaryTreeVisualization: React.FC = () => {
 
   const firstNodeRef = useRef<d3.HierarchyNode<ITreeNode> | null>(null);
 
-  useEffect(() => {
-    if (firstNodeRef.current) {
-      dispatch({
-        type: ActionTypes.SetCenter,
-        payload: {
-          x: firstNodeRef.current.data.x,
-          y: firstNodeRef.current.data.y,
-        },
-      });
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   if (firstNodeRef.current) {
+  //     dispatch({
+  //       type: ActionTypes.SetCenter,
+  //       payload: {
+  //         x: firstNodeRef.current.data.x,
+  //         y: firstNodeRef.current.data.y,
+  //       },
+  //     });
+  //   }
+  // }, [dispatch]);
 
   // Store a reference to the first node
   useEffect(() => {

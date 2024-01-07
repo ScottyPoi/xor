@@ -12,7 +12,10 @@ export const generateTreeData = (
   width: number,
   center: { x: number; y: number }
 ): ITreeNode => {
-  const rootNodePosition = center;
+  const rootNodePosition = {
+    x: center.x,
+    y: center.y,
+  };
   const root: ITreeNode = { id: "0b", ...rootNodePosition, angle: 0 };
 
   const addChildren = (node: ITreeNode, level: number, angleRange: number) => {

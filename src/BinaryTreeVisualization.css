@@ -21,21 +21,24 @@
 }
 
 .tree-container {
-  display: inline-flex;
-  position: fixed;
-  width: 100%; /* Full height */
-  height: 100%; /* Full height */
+  display: flex;
+  flex-direction: row;
+  /* position: fixed; */
+   width: 120vh; 
+  height: 94vh;
   overflow: scroll; /* Enables scroll */
   padding-bottom: 50px;
   outline: 1px solid #0F0;
   border: 1px solid #000;
+  justify-content: center;
+  align-items: center;
   position: relative; /* For absolute positioning of tooltip */
 }
 
 .tree-svg {
-  display: flex; /* Fix for scrolling on svg elements */
-  height: 120%;
-  width: 100%; /* Add this line */
+  display: flex;
+  height: 90vh;
+  width: 120vh;  
   overflow: auto;
   outline: 1px solid #0FF;
   padding: 1px;
