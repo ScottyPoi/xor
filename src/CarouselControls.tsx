@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import {
   PlayArrow,
   Pause,
   HideImage,
   Slideshow,
-  GridGoldenratioSharp,
 } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { BinaryTreeContext } from "./BinaryTreeProvider";
@@ -22,7 +21,7 @@ export default function CarouselControls({
   toggleShown,
   togglePlaying,
 }: CarouselProps) {
-  const { state, dispatch } = useContext(BinaryTreeContext);
+  useContext(BinaryTreeContext);
   return (
     <Box width="100%" height={"50px"} >
       {isPlaying ? (

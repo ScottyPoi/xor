@@ -4,14 +4,9 @@ import * as d3 from "d3";
 import "./BinaryTreeVisualization.css";
 import { generateTreeData } from "./treeUtils";
 import { ITreeNode } from "./types";
-import { useWindowSize } from "./useWindowSize";
 import TreeNode, { HexaryLink, HexaryLink2, NodeLink } from "./TreeNode";
-import InfoContainer from "./InfoContainer";
 import HeatMap from "./HeatMap";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
-import TreeMsg from "./TreeMsg";
-import { isVisible } from "@testing-library/user-event/dist/utils";
-import { ChangeDepth } from "./DepthButtons";
 import { Button } from "@mui/material";
 import { CloseVisualizer } from "./OpenVisualizer";
 
@@ -19,10 +14,6 @@ const BinaryTreeVisualization: React.FC = () => {
   const { state, dispatch } = React.useContext(BinaryTreeContext);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [width, setWidth] = React.useState(0); // Use our custom hook
-  const [leftVisible, setLeftVisible] = React.useState(true);
-  const [rightVisible, setRightVisible] = React.useState(true);
-  const toggleLeftVisibility = () => setLeftVisible(!leftVisible);
-  const toggleRightVisibility = () => setRightVisible(!rightVisible);
   const toggleBinaryNodes = () => {
     dispatch({
       type: state.binaryNodesVisible
@@ -37,23 +28,11 @@ const BinaryTreeVisualization: React.FC = () => {
         : ActionTypes.ShowBinaryLinks,
     });
   };
-  const toggleHexaryNodes = () => {
-    dispatch({
-      type: state.hexaryNodesVisible
-        ? ActionTypes.HideHexaryNodes
-        : ActionTypes.ShowHexaryNodes,
-    });
-  };
   const toggleHexaryLinks = () => {
     dispatch({
       type: state.hexaryLinksVisible
         ? ActionTypes.HideHexaryLinks
         : ActionTypes.ShowHexaryLinks,
-    });
-  };
-  const toggleHeatMap = () => {
-    dispatch({
-      type: state.heatVisible ? ActionTypes.HideHeat : ActionTypes.ShowHeat,
     });
   };
   const update = useCallback(() => {
@@ -96,7 +75,7 @@ const BinaryTreeVisualization: React.FC = () => {
 
   useEffect(() => {
     update();
-  }, [leftVisible, rightVisible, update]);
+  }, [update]);
 
   // useMemo to memoize the tree data based on the depth and dimensions
   const treeData = useMemo(
@@ -232,14 +211,14 @@ const BinaryTreeVisualization: React.FC = () => {
           onClick={toggleBinaryLinks}
           color={state.binaryLinksVisible ? "primary" : "error"}
         >
-        {state.binaryLinksVisible ? "Hide" : "Show"}  Binary Links 
+          {state.binaryLinksVisible ? "Hide" : "Show"} Binary Links
         </Button>
         <Button
           variant="contained"
           onClick={toggleBinaryNodes}
           color={state.binaryNodesVisible ? "primary" : "error"}
         >
-         {state.binaryNodesVisible ? "Hide" : "Show"} Binary Nodes 
+          {state.binaryNodesVisible ? "Hide" : "Show"} Binary Nodes
         </Button>
         <CloseVisualizer />
       </div>

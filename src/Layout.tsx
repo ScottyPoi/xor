@@ -9,7 +9,7 @@ import { SwipeLeftSharp, SwipeRightSharp } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { padToEven } from "./treeUtils";
 import ReactMarkdown from "react-markdown";
-import OpenVisualizer, { CloseVisualizer } from "./OpenVisualizer";
+import OpenVisualizer from "./OpenVisualizer";
 
 export default function Layout() {
   const { state, dispatch } = useContext(BinaryTreeContext);
@@ -142,7 +142,7 @@ export function Home() {
         createSpanWithAnimation(_c, char, index);
       });
     }
-  }, [c]);
+  }, [a, b, c]);
 
   // useEffect(() => {
   //   setValues();

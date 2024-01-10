@@ -11,7 +11,7 @@ interface CloseVisualizerProps {
 }
 
 const OpenVisualizer: React.FC<OpenVisualizerProps> = () => {
-  const { state, dispatch } = useContext(BinaryTreeContext);
+  const { dispatch } = useContext(BinaryTreeContext);
   // Component logic here
   const open = () => {
     dispatch({ type: ActionTypes.OpenApp });

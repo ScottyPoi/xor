@@ -18,15 +18,6 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
     [dispatch]
   );
 
-  const handleClick = useCallback(
-    (node: d3.HierarchyNode<ITreeNode>) => {
-      if (node.data.id.slice(2).length === state.depth - 1) {
-      } else {
-        //
-      }
-    },
-    [state.depth]
-  );
 
   const handleMouseOut = useCallback(() => {
     console.log("mouseout");
@@ -121,8 +112,6 @@ export const NodeLink = ({ linkData }: NodeLinkProps) => {
     if (!isLeafLink) return;
     dispatch({ type: ActionTypes.SetTooltip, payload: null });
   };
-  const hexary = linkData.data.id.slice(2).length === 4;
-  const hexary2 = linkData.data.id.slice(2).length === 8;
 
   return (
     <>
@@ -167,7 +156,7 @@ export const NodeLink = ({ linkData }: NodeLinkProps) => {
   );
 };
 export const HexaryLink = ({ linkData }: NodeLinkProps) => {
-  const { state, dispatch } = useContext(BinaryTreeContext);
+  const { state } = useContext(BinaryTreeContext);
   return (
     <line
       x1={state.center.x}
@@ -183,7 +172,7 @@ export const HexaryLink = ({ linkData }: NodeLinkProps) => {
   );
 };
 export const HexaryLink2 = ({ linkData }: NodeLinkProps) => {
-  const { state, dispatch } = useContext(BinaryTreeContext);
+  useContext(BinaryTreeContext);
 
   const leafParent = linkData.ancestors()[4];
 

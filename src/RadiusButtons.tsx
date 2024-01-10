@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import Button from "@mui/material/Button";
 import {
@@ -8,7 +8,6 @@ import {
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
 import { Slider, Typography } from "@mui/material";
-import * as d3 from "d3";
 export default function RadiusButton({ inc }: { inc: boolean }) {
   const { state, dispatch } = useContext(BinaryTreeContext);
   const handleClick = () => {
@@ -56,16 +55,11 @@ export function RadiusNButton({ inc }: { inc: boolean }) {
 
 export function ChangeRadius() {
   const { state, dispatch } = useContext(BinaryTreeContext);
-  const [width, setWidth] = useState<number>((window.innerWidth * 2) / 3);
 
   const setRadiusN = (val: number | number[]) => {
     const payload = val instanceof Array ? val[0] : val;
     dispatch({ type: ActionTypes.SetRadiusN, payload: BigInt(payload) });
   };
-
-  useEffect(() => {
-    setWidth((window.innerWidth * 2) / 3);
-  }, [state.center]);
 
   return (
     <div>

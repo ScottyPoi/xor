@@ -1,8 +1,6 @@
-import React from "react";
 import "./App.css";
 import ErrorBoundary from "./ErrorBoundary";
 import BinaryTreeProvider from "./BinaryTreeProvider";
-import BinaryTreeVisualization from "./BinaryTreeVisualization";
 import "./BinaryTreeVisualization.css";
 
 import Layout from "./Layout";

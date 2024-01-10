@@ -20,7 +20,6 @@ export const generateTreeData = (
 
   const addChildren = (node: ITreeNode, level: number, angleRange: number) => {
     if (level < depth) {
-      const e = depth / (1 + depth);
       // const distance = (((level ** e / (depth - 1) ** e) * width)) / 4;
       const leafDistance = rootNodePosition.y * 0.8;
       const distance = leafDistance * (level / depth) ** (1 / 2);

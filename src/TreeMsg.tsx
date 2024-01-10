@@ -1,21 +1,11 @@
 import { useContext, useMemo, useState } from "react";
 import { BinaryTreeContext } from "./BinaryTreeProvider";
 import Carousel from "react-material-ui-carousel";
-import { Button } from "@mui/material";
-import MenuOpen from "@mui/icons-material/MenuOpen";
 import CarouselControls from "./CarouselControls";
-import { SwipeLeftSharp, SwipeRightSharp } from "@mui/icons-material";
 export default function TreeMsg() {
-  const { state, dispatch } = useContext(BinaryTreeContext);
-  const [hovered, setHovered] = useState(false);
+  const { state } = useContext(BinaryTreeContext);
   const [show, setShow] = useState(true);
   const [play, setPlay] = useState(true);
-  const handleMouseOver = () => {
-    setHovered(true);
-  };
-  const handleMouseOut = () => {
-    setHovered(false);
-  };
   const treeMsg = useMemo(
     () => `This is a Binary Tree at depth=${state.depth - 1}`,
     [state.depth]
@@ -29,20 +19,26 @@ export default function TreeMsg() {
   );
   const networkMsg = useMemo(
     () =>
-      `This tree models a DHT network with 2^${state.depth - 1} possible ${state.depth > 1 ? "NODE_IDs" : "NODE_ID."}`,
+      `This tree models a DHT network with 2^${state.depth - 1} possible ${
+        state.depth > 1 ? "NODE_IDs" : "NODE_ID."
+      }`,
     [state.depth]
   );
   const distanceMsg = useMemo(
     () =>
-      `The range of NODE_ID & DISTANCES is   0 to 2^${state.depth - 1}-1   (0 to ${2 ** (state.depth - 1) - 1})`,
+      `The range of NODE_ID & DISTANCES is   0 to 2^${
+        state.depth - 1
+      }-1   (0 to ${2 ** (state.depth - 1) - 1})`,
     [state.depth]
   );
 
   const clickMsg = `Click to select a Leaf Node and see its DISTANCE to other Leaf Nodes.`;
-  const radiusMsg = [
-    `Adjust the RADIUS up and down using the controls at the bottom.`,
-    `Nodes within the yellow band are have DISTANCE within the RADIUS.`,
-  ];
+  const radiusMsg = useMemo(() => {
+    return [
+      `Adjust the RADIUS up and down using the controls at the bottom.`,
+      `Nodes within the yellow band are have DISTANCE within the RADIUS.`,
+    ];
+  }, []);
 
   const depthMessages: Record<number, string[]> = useMemo(() => {
     return {
@@ -68,7 +64,7 @@ export default function TreeMsg() {
         `The "LEFT"/"RIGHT" pattern is repeated on the branches at all depths.`,
       ],
     };
-  }, []);
+  }, [clickMsg, radiusMsg]);
 
   const message = useMemo(() => {
     const msg = [treeMsg, leafMsg, networkMsg];
