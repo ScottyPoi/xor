@@ -1,43 +1,71 @@
 /* filename: BinaryTreeVisualization.css */
 
+.homescreen {
+  opacity:1;
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+  display: flex;
+  width: 100vw; 
+  height: 100vh;
+  justify-content: space-evenly;
+  font-family: monospace;
+}
+
+
+
+.homescreen > div {
+  font-family: monospace;
+}
+
 .controls {
   display: flex;
-  /* direction: ; */
   align-items: center;
   /* position: fixed; */
   /* top: 0;
   left: 0; */
   background-color: #eee;
   padding: 1px;
-  z-index: 1000;
+  /* z-index: 1000; */
 }
 
-.info-container table {
-  margin-left: 1em;
-  width: max-content;
-  height: max-content;
+.info-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: 1em;
+  overflow: scroll;
+  max-height: 50%;
   text-align: left;
+  border: 1px solid black
 }
 
 .tree-container {
-  /* width: 100%; */
-  display: inline-flex;
-  margin-top: 50px; /* Space for the header */
-  height: calc(100vh - 50px); /* Full height minus header space */
-  overflow: auto; /* Enables scroll */
-  padding: 10px;
+
+  opacity: 1;
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+  display: flex;
+  flex-direction: row;
+width: 100%; 
+  height: 100%;
+  overflow: scroll; /* Enables scroll */
+  padding-bottom: 50px;
   outline: 1px solid #0F0;
   border: 1px solid #000;
+  justify-content: center;
+  align-items: center;
   position: relative; /* For absolute positioning of tooltip */
 }
 
 .tree-svg {
-  display: flex; /* Fix for scrolling on svg elements */
-  height: auto;
-  width: 100%; /* Add this line */
-  outline: 1px solid #0FF;
-  padding: 10px;
-  
+  display: flex;
+  height: 100%;
+  width: 100%;  
+  overflow: auto;
+  /* outline: 2px solid #0FF; */
+  padding: 1px;
 }
 
 .tooltip {
@@ -74,6 +102,7 @@
   fill: none;
   stroke: #555;
   stroke-width: 1.5px;
+  
 }
 
 .node circle {
@@ -99,4 +128,74 @@
 
 .button:hover {
   background-color: #ccc;
+}
+
+.tree-msg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: "flex";
+  flex-direction: "row";
+  justify-content: space-between;
+  margin-inline: 10px;
+  margin-top: 5px;
+  max-height: 30vh;
+  overflow: auto;
+  /* justify-content: "center";
+  align-items: "center"; */
+  width: 25%;
+  outline: 5px solid #0FF;
+}
+
+.msg-line {
+  font-size: xx-large;
+  text-align: center;
+  margin: 5px 5px;
+  color: yellow;
+  opacity: 1;
+  font-family: "monospace";
+  margin: 4;
+  border: 1px solid black;
+
+}
+
+.textured {
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}
+
+.distance {
+  margin-top: 4px;
+}
+
+.distanceselected {
+  font-weight: bolder;
+  font-size: 'xxx-large';
+  margin-top: 8px;
+}
+
+.distancehovered {
+  font-weight: bold;
+  font-size: 'xx-large';
+  margin-top: 8px
+}
+
+.inradius {
+  outline: 2px solid yellow;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0 }
+  100% { opacity: 1; color: white }
+}
+@keyframes fadeIn0 {
+  0% { opacity: 1; border: 2px solid yellow }
+  99% {  border: 2px solid yellow}
+  100% { opacity: 1; color: white; border: none}
+}
+@keyframes fadeIn1 {
+  0% { opacity: 1; border: 2px solid yellow }
+  99% {  border: 2px solid yellow}
+  100% { opacity: 1; color: red }
 }

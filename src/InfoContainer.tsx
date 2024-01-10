@@ -1,195 +1,158 @@
 import { useContext } from "react";
-import { padToEven } from "./treeUtils";
+import { fillColorByDistance, padToEven } from "./treeUtils";
 import * as d3 from "d3";
-import Header from "./Header";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
-
-const fillColorByDistance = (
-  colorScale: d3.ScaleSequential<string, never>,
-  distance?: string
-) => {
-  return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
-};
+import Button from "@mui/material/Button/Button";
+import { SwatchesProps } from "./types";
 
 export default function InfoContainer() {
   const { state, dispatch } = useContext(BinaryTreeContext);
+
   const minDistance = 0;
   const maxDistance = 2 ** (state.depth - 1) - 1;
   const colorScale = d3
     .scaleSequential(d3.interpolateReds)
     .domain([minDistance, maxDistance]);
-  // const swatches = Math.min(32, 2 ** (depth - 1));
   const swatches = 2 ** (state.depth - 1);
+
+  const toggleHeatMap = () => {
+    state.heatVisible
+      ? dispatch({ type: ActionTypes.HideHeat })
+      : dispatch({
+          type: ActionTypes.ShowHeat,
+        });
+  };
+  return (
+    <div className="info-container">
+      <table>
+        <tbody>
+          <tr
+            style={{
+              color: "white",
+              fontWeight: "bolder",
+              fontSize: "large",
+            }}
+          >
+            <th
+              style={{
+                color: "white",
+                background: state.selected.endsWith("1") ? "blue" : "green",
+              }}
+            >
+              Selected:
+              {`NODE:  `}
+              {state.selected
+                .slice(2)
+                .split("")
+                .map((d) => {
+                  return (
+                    <span
+                      style={{
+                        background: d === "1" ? "blue" : "green",
+                      }}
+                    >
+                      {d}
+                    </span>
+                  );
+                })}
+            </th>
+          </tr>
+          {state.selected && (
+            <tr>
+              <div style={{ maxHeight: "40vh", overflow: "auto" }}>
+                <td>
+                  <Swatches count={swatches} colorScale={colorScale} />
+                </td>
+              </div>
+            </tr>
+          )}
+          <tr></tr>
+        </tbody>
+      </table>
+      <Button
+        fullWidth
+        variant="contained"
+        disabled={state.depth < 3}
+        color={state.heatVisible ? "primary" : "error"}
+        onClick={toggleHeatMap}
+        style={{
+          fontSize: "x-large",
+        }}
+      >
+        {state.heatVisible ? "Hide" : "Show"} HeatMap
+      </Button>
+    </div>
+  );
+}
+
+
+
+function Swatches({ count, colorScale }: SwatchesProps) {
+  const { state, dispatch } = useContext(BinaryTreeContext);
   const handleMouseOver = (id: string) => {
     dispatch({ type: ActionTypes.SetTooltip, payload: { id, x: 0, y: 0 } });
   };
   const handleMouseOut = () => {
     dispatch({ type: ActionTypes.SetTooltip, payload: null });
   };
-  const setRadius = (radius: number) => {
-    dispatch({ type: ActionTypes.SetRadius, payload: radius });
+  const inRadius = (distance: string) => {
+    return BigInt(distance) <= state.radiusN;
   };
-  const increaseRadius = () => {
-    if (state.radius + 1 >= state.depth) return;
-    setRadius(state.radius + 1);
-  };
-  const decreaseRadius = () => {
-    if (state.radius - 1 < 0) return;
-    setRadius(state.radius - 1);
-  };
-
   return (
-    <div className="info-container">
-      <Header />
-      <table>
-        <tbody>
-          <tr>
-            <th>
-              {state.tooltip && state.tooltip.id
-                ? state.tooltip.id +
-                  "_".repeat(state.depth + 3 - state.tooltip.id.length)
-                : "_".repeat(state.depth + 2)}{" "}
-            </th>
-            <td>{"---"}</td>
-          </tr>
-          <tr>
-            <th>Depth:</th>
-            <td>{state.depth - 1}</td>
-          </tr>
-          <tr>
-            <th>Leaves:</th>
-            <td>{2 ** (state.depth - 1)}</td>
-          </tr>
-          <tr>
-            <th>Radius:</th>
-            <td style={{ fontSize: "x-large" }}>
-              2^{state.radius} -1 ({"d < "}
-              {2 ** state.radius - 1})
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <button
-                style={{ width: "100%", height: "50px" }}
-                disabled={state.radius === 0}
-                onClick={decreaseRadius}
+    <div style={{ maxHeight: "40vh", overflow: "auto" }}>
+      <td>
+        {Array.from({ length: count }, (_, i) => i).map((x) => {
+          const s = parseInt(state.selected.slice(2), 2);
+          const d = x ^ s;
+          const hex = padToEven(d.toString(16));
+          const bin = d.toString(2).padStart(state.depth - 1, "0");
+          return (
+            <>
+              <tr
+                onMouseOut={handleMouseOut}
+                onMouseOver={() => handleMouseOver("0b" + bin)}
+                className={inRadius("0x" + x.toString(16)) ? "inradius" : ""}
+                style={{
+                  fontSize:
+                    state.selected === "0b" + bin
+                      ? "xxx-large"
+                      : state.tooltip?.id === "0b" + bin
+                      ? "xx-large"
+                      : "medium",
+                  fontWeight:
+                    state.selected === "0b" + bin
+                      ? "bolder"
+                      : state.tooltip?.id === "0b" + bin
+                      ? "bold"
+                      : "normal",
+                }}
               >
-                - Radius
-              </button>
-            </td>
-            <td>
-              <button
-                style={{ width: "100%", height: "50px" }}
-                onClick={increaseRadius}
-                disabled={state.radius === state.depth - 1}
-              >
-                + Radius
-              </button>
-            </td>
-          </tr>
-          <tr
-            style={{
-              color: "white",
-              background: state.selected.endsWith("1") ? "blue" : "green",
-            }}
-          >
-            <th>Node_A:</th>
-            <td>
-              <tr>
-                <th>binary:</th>
-                <td>{state.selected}</td>
-              </tr>
-              <tr>
-                <th>hex_id:</th>
-                <td>
+                <th style={{ textAlign: "center" }}>{x}</th>
+                <td
+                  style={{
+                    color: "white",
+                    background: fillColorByDistance(
+                      colorScale,
+                      "0x" + x.toString(16)
+                    ),
+                  }}
+                >
+                  ___
+                </td>
+                <td
+                  style={{
+                    color: "white",
+                    background: bin.endsWith("1") ? "blue" : "green",
+                  }}
+                >
                   0x
-                  {padToEven(parseInt(state.selected.slice(2), 2).toString(16))}
+                  {hex}
                 </td>
               </tr>
-            </td>
-          </tr>
-          {state.selected && (
-            <tr>
-              <th style={{ textAlign: "center" }}>
-                Distances:
-                <br />0 -- {2 ** (state.depth - 1) - 1}
-              </th>
-              <div style={{ maxHeight: 780, overflow: "auto" }}>
-                <td>
-                  {Array.from({ length: swatches }, (_, i) => i).map((x) => {
-                    const s = parseInt(state.selected.slice(2), 2);
-                    const d = x ^ s;
-                    const hex = padToEven(d.toString(16));
-                    const bin = d.toString(2).padStart(state.depth - 1, "0");
-                    return (
-                      <>
-                        <tr
-                          onMouseOut={handleMouseOut}
-                          onMouseOver={() => handleMouseOver("0b" + bin)}
-                        >
-                          <th>{x}</th>
-                          <td
-                            style={{
-                              color: "white",
-                              background: fillColorByDistance(
-                                colorScale,
-                                "0x" + x.toString(16)
-                              ),
-                            }}
-                          >
-                            ___
-                          </td>
-                          <td
-                            style={{
-                              color: "white",
-                              background: bin.endsWith("1") ? "blue" : "green",
-                            }}
-                          >
-                            0x
-                            {hex}
-                          </td>
-                        </tr>
-                      </>
-                    );
-                  })}
-                </td>
-              </div>
-            </tr>
-          )}
-          {/* {nodeB && nodeB.id && (
-            <tr>
-              <th>Node_B:</th>
-              <td>
-                <tr>
-                  <th>binary:</th>
-                  <td>{nodeB.id}</td>
-                </tr>
-                <tr>
-                  <th>hex_id:</th>
-                  <td>
-                    {nodeB.id
-                      ? "0x" +
-                        padToEven(parseInt(nodeB.id.slice(2), 2).toString(16))
-                      : ""}
-                  </td>
-                </tr>
-              </td>
-            </tr>
-          )}
-
-          {nodeB && nodeB.id && (
-            <tr>
-              <th>Distance:</th>
-              <td>
-                {parseInt(nodeB.id.slice(2), 2) ^
-                  parseInt(state.selected.slice(2), 2)}
-              </td>
-            </tr>
-          )} */}
-
-          {/* Add more rows as needed */}
-        </tbody>
-      </table>
+            </>
+          );
+        })}
+      </td>
     </div>
   );
 }
