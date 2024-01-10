@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/dht-app/static/css/main.a63b4b9a.css",
-    "main.js": "/dht-app/static/js/main.77feeca0.js",
-    "static/js/787.0407f692.chunk.js": "/dht-app/static/js/787.0407f692.chunk.js",
-    "index.html": "/dht-app/index.html",
-    "main.a63b4b9a.css.map": "/dht-app/static/css/main.a63b4b9a.css.map",
-    "main.77feeca0.js.map": "/dht-app/static/js/main.77feeca0.js.map",
-    "787.0407f692.chunk.js.map": "/dht-app/static/js/787.0407f692.chunk.js.map"
+    "main.css": "/xor/static/css/main.a63b4b9a.css",
+    "main.js": "/xor/static/js/main.b0d65b5a.js",
+    "static/js/787.7d01053a.chunk.js": "/xor/static/js/787.7d01053a.chunk.js",
+    "index.html": "/xor/index.html",
+    "main.a63b4b9a.css.map": "/xor/static/css/main.a63b4b9a.css.map",
+    "main.b0d65b5a.js.map": "/xor/static/js/main.b0d65b5a.js.map",
+    "787.7d01053a.chunk.js.map": "/xor/static/js/787.7d01053a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a63b4b9a.css",
-    "static/js/main.77feeca0.js"
+    "static/js/main.b0d65b5a.js"
   ]
 }
