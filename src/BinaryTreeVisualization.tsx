@@ -79,8 +79,8 @@ const BinaryTreeVisualization: React.FC = () => {
 
   // useMemo to memoize the tree data based on the depth and dimensions
   const treeData = useMemo(
-    () => generateTreeData(state.depth, width, state.center),
-    [state.depth, state.center, width]
+    () => generateTreeData(state.depth, state.center),
+    [state.depth, state.center]
   );
 
   const root = d3.hierarchy(treeData);
