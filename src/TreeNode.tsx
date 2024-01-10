@@ -1,11 +1,8 @@
 import { useCallback, useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
-import { ITreeNode } from "./types";
+import { ITreeNode, NodeLinkProps, TreeNodeProps } from "./types";
 import { calculateDistance } from "./treeUtils";
 
-export interface TreeNodeProps {
-  treeNode: d3.HierarchyNode<ITreeNode>;
-}
 const TreeNode = ({ treeNode }: TreeNodeProps) => {
   const { state, dispatch } = useContext(BinaryTreeContext);
   const handleMouseOver = useCallback(
@@ -92,9 +89,7 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
     />
   );
 };
-interface NodeLinkProps {
-  linkData: d3.HierarchyNode<ITreeNode>;
-}
+
 
 export const NodeLink = ({ linkData }: NodeLinkProps) => {
   const { state, dispatch } = useContext(BinaryTreeContext);

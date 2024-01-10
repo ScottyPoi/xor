@@ -3,14 +3,7 @@ import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import Button from "@mui/material/Button";
 import { ArrowBack, Home } from "@mui/icons-material";
 
-interface OpenVisualizerProps {
-  // Define props here
-}
-interface CloseVisualizerProps {
-  // Define props here
-}
-
-const OpenVisualizer: React.FC<OpenVisualizerProps> = () => {
+const OpenVisualizer: React.FC = () => {
   const { dispatch } = useContext(BinaryTreeContext);
   // Component logic here
   const open = () => {
@@ -33,7 +26,7 @@ const OpenVisualizer: React.FC<OpenVisualizerProps> = () => {
   );
 };
 
-export const CloseVisualizer: React.FC<CloseVisualizerProps> = () => {
+export const CloseVisualizer: React.FC = () => {
   const { dispatch } = useContext(BinaryTreeContext);
   // Component logic here
   const close = () => {

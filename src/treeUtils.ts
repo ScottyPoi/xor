@@ -1,11 +1,7 @@
 // treeUtils.ts
-interface ITreeNode {
-  id: string;
-  x: number;
-  y: number;
-  angle: number;
-  children?: ITreeNode[];
-}
+
+import { ITreeNode, TextAngleParams } from "./types";
+
 
 export const generateTreeData = (
   depth: number,
@@ -175,15 +171,7 @@ export const fillColorByDistance = (
   return distance ? colorScale(parseInt(distance.slice(2), 16)) : "none";
 };
 
-interface TextAngleParams {
-  startAngle: number;
-  endAngle: number;
-  distance: string;
-  depth: number;
-  id: string;
-  hovered: boolean;
-  selected: boolean;
-}
+
 
 export const textStartAngle = ({
   startAngle,

@@ -7,13 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { BinaryTreeContext } from "./BinaryTreeProvider";
-
-interface CarouselProps {
-  isPlaying: boolean;
-  isShown: boolean;
-  togglePlaying: () => void;
-  toggleShown: () => void;
-}
+import { CarouselProps } from "./types";
 
 export default function CarouselControls({
   isPlaying,

@@ -3,6 +3,7 @@ import { fillColorByDistance, padToEven } from "./treeUtils";
 import * as d3 from "d3";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import Button from "@mui/material/Button/Button";
+import { SwatchesProps } from "./types";
 
 export default function InfoContainer() {
   const { state, dispatch } = useContext(BinaryTreeContext);
@@ -84,10 +85,7 @@ export default function InfoContainer() {
   );
 }
 
-interface SwatchesProps {
-  count: number;
-  colorScale: d3.ScaleSequential<string, never>;
-}
+
 
 function Swatches({ count, colorScale }: SwatchesProps) {
   const { state, dispatch } = useContext(BinaryTreeContext);
