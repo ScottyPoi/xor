@@ -1,5 +1,23 @@
 /* filename: BinaryTreeVisualization.css */
 
+.homescreen {
+  opacity:1;
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+  display: flex;
+  width: 100vw; 
+  height: 100vh;
+  justify-content: space-evenly;
+  font-family: monospace;
+}
+
+
+
+.homescreen > div {
+  font-family: monospace;
+}
+
 .controls {
   display: flex;
   align-items: center;
@@ -11,21 +29,27 @@
   /* z-index: 1000; */
 }
 
-.info-container table {
-  /* position: fixed; */
-  margin-left: 1em;
-  overflow: visible;
-  height: max-content;
+.info-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  margin: 1em;
+  overflow: scroll;
+  max-height: 50%;
   text-align: left;
   border: 1px solid black
 }
 
 .tree-container {
+
+  opacity: 1;
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
   display: flex;
   flex-direction: row;
-  /* position: fixed; */
-   width: 120vh; 
-  height: 94vh;
+width: 100%; 
+  height: 100%;
   overflow: scroll; /* Enables scroll */
   padding-bottom: 50px;
   outline: 1px solid #0F0;
@@ -37,10 +61,10 @@
 
 .tree-svg {
   display: flex;
-  height: 90vh;
-  width: 120vh;  
+  height: 100%;
+  width: 100%;  
   overflow: auto;
-  outline: 1px solid #0FF;
+  /* outline: 2px solid #0FF; */
   padding: 1px;
 }
 
@@ -78,6 +102,7 @@
   fill: none;
   stroke: #555;
   stroke-width: 1.5px;
+  
 }
 
 .node circle {
@@ -106,19 +131,71 @@
 }
 
 .tree-msg {
-  /* Styles for displaying controls messages */
-  width: 400px;
-  overflow-y: scroll;
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: "flex";
+  flex-direction: "row";
+  justify-content: space-between;
+  margin-inline: 10px;
+  margin-top: 5px;
+  max-height: 30vh;
+  overflow: auto;
+  /* justify-content: "center";
+  align-items: "center"; */
+  width: 25%;
+  outline: 5px solid #0FF;
 }
 
 .msg-line {
-  font-size: large;
-  text-align: left;
+  font-size: xx-large;
+  text-align: center;
   margin: 5px 5px;
-  color: "#444";
+  color: yellow;
+  opacity: 1;
   font-family: "monospace";
   margin: 4;
   border: 1px solid black;
 
+}
+
+.textured {
+  background-image:  linear-gradient(#444cf7 2px, transparent 2px), linear-gradient(90deg, #444cf7 2px, transparent 2px), linear-gradient(#444cf7 1px, transparent 1px), linear-gradient(90deg, #444cf7 1px, #2f4f4f 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}
+
+.distance {
+  margin-top: 4px;
+}
+
+.distanceselected {
+  font-weight: bolder;
+  font-size: 'xxx-large';
+  margin-top: 8px;
+}
+
+.distancehovered {
+  font-weight: bold;
+  font-size: 'xx-large';
+  margin-top: 8px
+}
+
+.inradius {
+  outline: 2px solid yellow;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0 }
+  100% { opacity: 1; color: white }
+}
+@keyframes fadeIn0 {
+  0% { opacity: 1; border: 2px solid yellow }
+  99% {  border: 2px solid yellow}
+  100% { opacity: 1; color: white; border: none}
+}
+@keyframes fadeIn1 {
+  0% { opacity: 1; border: 2px solid yellow }
+  99% {  border: 2px solid yellow}
+  100% { opacity: 1; color: red }
 }

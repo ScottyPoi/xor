@@ -1,6 +1,7 @@
 import { useCallback, useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import { ITreeNode } from "./types";
+import { calculateDistance } from "./HeatMap";
 
 export interface TreeNodeProps {
   treeNode: d3.HierarchyNode<ITreeNode>;
@@ -43,6 +44,9 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
   const nodeData = treeNode.data;
   const hovered = state.tooltip?.id === treeNode.data.id;
   const selected = state.selected === treeNode.data.id;
+  const hexary = state.depth > 4 && nodeData.id.slice(2).length === 4;
+  const distance = calculateDistance(state.selected, nodeData.id);
+  const inRadius = BigInt(distance) < state.radiusN;
 
   return (
     <circle
@@ -53,7 +57,7 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
           ? 16
           : state.selected === nodeData.id
           ? 16
-          : Math.max(1, 16 - treeNode.depth*1.5)
+          : Math.max(1, 16 - treeNode.depth * 1.5)
       } // Specify the radius of the circle
       fill={
         // "#aaf"
@@ -69,11 +73,15 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
           ? "#99f"
           : "#9f9"
       } // Specify the fill color of the circle
-      fillOpacity={selected ? 1 : 0.75}
-      strokeWidth={2}
+      fillOpacity={selected || hovered || hexary ? 1 : 0.75}
+      strokeWidth={selected ? 4 : inRadius ? 3 : 2}
       stroke={
         selected
-          ? "#000"
+          ? "yellow"
+          : inRadius
+          ? "yellow"
+          : hexary
+          ? "#FFF"
           : hovered
           ? nodeData.id.endsWith("1")
             ? "#00f"
@@ -89,7 +97,7 @@ const TreeNode = ({ treeNode }: TreeNodeProps) => {
       onMouseOver={() => handleMouseOver(nodeData)}
       onMouseOut={handleMouseOut}
       onDoubleClick={() => handleDoubleClick(treeNode)}
-      onClick={() => handleClick(treeNode)}
+      onClick={() => handleDoubleClick(treeNode)}
     />
   );
 };
@@ -113,43 +121,83 @@ export const NodeLink = ({ linkData }: NodeLinkProps) => {
     if (!isLeafLink) return;
     dispatch({ type: ActionTypes.SetTooltip, payload: null });
   };
+  const hexary = linkData.data.id.slice(2).length === 4;
+  const hexary2 = linkData.data.id.slice(2).length === 8;
+
+  return (
+    <>
+      <line
+        x1={linkData.parent!.data.x}
+        y1={linkData.parent!.data.y}
+        x2={linkData.data.x}
+        y2={linkData.data.y}
+        stroke={
+          linkData.data.id.endsWith("1")
+            ? "#" +
+              (path ? "0" : "0") +
+              (path
+                ? "0"
+                : Math.min(15, Math.floor(linkData.depth)).toString(16)) +
+              "F"
+            : "#" +
+              (path
+                ? "0"
+                : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(
+                    16
+                  )) +
+              "f" +
+              (path
+                ? "0"
+                : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
+        }
+        strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
+        strokeOpacity={
+          state.selected
+            ? 1
+            : state.tooltip?.id === linkData.data.id
+            ? 0.8
+            : path
+            ? 0.8
+            : 0.7
+        }
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+      />
+    </>
+  );
+};
+export const HexaryLink = ({ linkData }: NodeLinkProps) => {
+  const { state, dispatch } = useContext(BinaryTreeContext);
   return (
     <line
-      x1={linkData.parent!.data.x}
-      y1={linkData.parent!.data.y}
+      x1={state.center.x}
+      y1={state.center.y}
       x2={linkData.data.x}
       y2={linkData.data.y}
-      stroke={
-        linkData.data.id.endsWith("1")
-          ? "#" +
-            (path
-              ? "0"
-              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
-            (path
-              ? "0"
-              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
-            "f"
-          : "#" +
-            (path
-              ? "0"
-              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16)) +
-            "f" +
-            (path
-              ? "0"
-              : Math.min(15, Math.floor(linkData.depth * 1.75)).toString(16))
-      }
-      strokeWidth={Math.max(1, 32 - linkData.depth * 2)}
-      strokeOpacity={
-        state.selected
-          ? 1
-          : state.tooltip?.id === linkData.data.id
-          ? 0.75
-          : path
-          ? 0.75
-          : 0.5
-      }
-      onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
+      stroke="white"
+      strokeWidth={12}
+      strokeOpacity={0.5}
+      // onMouseOver={handleMouseOver}
+      // onMouseOut={handleMouseOut}
+    />
+  );
+};
+export const HexaryLink2 = ({ linkData }: NodeLinkProps) => {
+  const { state, dispatch } = useContext(BinaryTreeContext);
+
+  const leafParent = linkData.ancestors()[4];
+
+  return (
+    <line
+      x1={leafParent!.data.x}
+      y1={leafParent!.data.y}
+      x2={linkData.data.x}
+      y2={linkData.data.y}
+      stroke="white"
+      strokeWidth={1}
+      strokeOpacity={1}
+      // onMouseOver={handleMouseOver}
+      // onMouseOut={handleMouseOut}
     />
   );
 };

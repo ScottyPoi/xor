@@ -1,8 +1,11 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { padToEven } from "./treeUtils";
 import * as d3 from "d3";
 import Header from "./Header";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { useWindowSize } from "./useWindowSize";
+import DepthButton from "./DepthButtons";
+import Button from "@mui/material/Button/Button";
 
 const fillColorByDistance = (
   colorScale: d3.ScaleSequential<string, never>,
@@ -13,6 +16,45 @@ const fillColorByDistance = (
 
 export default function InfoContainer() {
   const { state, dispatch } = useContext(BinaryTreeContext);
+  const [isVisible, setIsVisible] = useState(true);
+  const [size, setSize] = useState<Record<string, any>>({});
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
+  useEffect(() => {
+    window.onresize = () => {
+      const sw = d3.select(".tree-svg");
+      const style = {
+        width: sw.style("width"),
+        height: sw.style("height"),
+        winWid: window.innerWidth,
+        winHei: window.innerHeight,
+        centerx: window.innerWidth / 2,
+        centery: window.innerHeight / 2,
+      };
+      if (style.width > style.height) {
+        setIsVisible(false);
+      }
+      setSize(style);
+    };
+  }, []);
+
+  useEffect(() => {
+    const sw = d3.select(".tree-svg");
+    const style = {
+      width: sw.style("width"),
+      height: sw.style("height"),
+      winWid: window.innerWidth,
+      winHei: window.innerHeight,
+      centerx: window.innerWidth / 2,
+      centery: window.innerHeight * 0.6,
+    };
+    if (style.width > style.height) {
+      setIsVisible(false);
+    }
+    setSize(style);
+  }, []);
+
   const minDistance = 0;
   const maxDistance = 2 ** (state.depth - 1) - 1;
   const colorScale = d3
@@ -29,6 +71,10 @@ export default function InfoContainer() {
   const setRadius = (radius: number) => {
     dispatch({ type: ActionTypes.SetRadius, payload: radius });
   };
+  const inRadius = (distance: string) => {
+    return BigInt(distance) <= state.radiusN;
+  };
+
   const increaseRadius = () => {
     if (state.radius + 1 >= state.depth) return;
     setRadius(state.radius + 1);
@@ -49,110 +95,60 @@ export default function InfoContainer() {
     changeDepth(state.depth - 1);
   };
 
+  const toggleHeatMap = () => {
+    state.heatVisible
+      ? dispatch({ type: ActionTypes.HideHeat })
+      : dispatch({
+          type: ActionTypes.ShowHeat,
+        });
+  };
   return (
+    // <div>
+    //   <button onClick={toggleVisibility}>
+    //     {isVisible ? "Hide" : "Show Controls"}
+    //   </button>
+    //   {isVisible && (
     <div className="info-container">
       <table>
         <tbody>
-          <tr>
-            <th>
-              {state.tooltip && state.tooltip.id
-                ? state.tooltip.id +
-                  "_".repeat(state.depth + 1 - state.tooltip.id.length)
-                : "_".repeat(state.depth + 2)}{" "}
-            </th>
-            <td>{"---"}</td>
-          </tr>
-          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
-            <th>Depth:</th>
-            <td>{state.depth - 1}</td>
-          </tr>
-          <tr>
-            <td>
-              <button
-                style={{ width: "160px", height: "50px" }}
-                disabled={state.depth <= 1}
-                onClick={decrementDepth}
-              >
-                - Depth
-              </button>
-            </td>
-            <td>
-              <button
-                style={{ width: "160px", height: "50px" }}
-                onClick={incrementDepth}
-                disabled={state.depth > 16}
-              >
-                + Depth
-              </button>
-            </td>
-          </tr>
-          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
-            <th>Leaves: </th>
-            <td>2^{state.depth - 1}</td>
-          </tr>
-          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
-            <th></th>
-            <td>({2 ** (state.depth - 1)})</td>
-          </tr>
-          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
-            <th>Radius:</th>
-            <td>2^{state.radius} - 1</td>
-          </tr>
-          <tr style={{ fontSize: "x-large", textAlign: "center" }}>
-            <th>{}</th>
-            <td>
-              ({"d < "}
-              {2 ** state.radius - 1})
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <button
-                style={{ width: "160px", height: "50px" }}
-                disabled={state.radius === 0}
-                onClick={decreaseRadius}
-              >
-                - Radius
-              </button>
-            </td>
-            <td>
-              <button
-                style={{ width: "160px", height: "50px" }}
-                onClick={increaseRadius}
-                disabled={state.radius === state.depth - 1}
-              >
-                + Radius
-              </button>
-            </td>
-          </tr>
           <tr
             style={{
               color: "white",
-              background: state.selected.endsWith("1") ? "blue" : "green",
+              fontWeight: "bolder",
+              fontSize: "large",
             }}
           >
-            <th>Node_A:</th>
-            <td>
-              <tr>
-                <th>binary:</th>
-                <td>{state.selected}</td>
-              </tr>
-              <tr>
-                <th>hex_id:</th>
-                <td>
-                  0x
-                  {padToEven(parseInt(state.selected.slice(2), 2).toString(16))}
-                </td>
-              </tr>
-            </td>
+            <th
+              style={{
+                color: "white",
+                background: state.selected.endsWith("1") ? "blue" : "green",
+              }}
+            >
+              Selected:
+              {`NODE:  `}
+              {state.selected
+                .slice(2)
+                .split("")
+                .map((d) => {
+                  return (
+                    <span
+                      style={{
+                        background: d === "1" ? "blue" : "green",
+                      }}
+                    >
+                      {d}
+                    </span>
+                  );
+                })}
+            </th>
           </tr>
           {state.selected && (
             <tr>
-              <th style={{ textAlign: "center" }}>
+              {/* <th style={{ textAlign: "center" }}>
                 Distances:
                 <br />0 -- {2 ** (state.depth - 1) - 1}
-              </th>
-              <div style={{ maxHeight: 780, overflow: "auto" }}>
+              </th> */}
+              <div style={{ maxHeight: "40vh", overflow: "auto" }}>
                 <td>
                   {Array.from({ length: swatches }, (_, i) => i).map((x) => {
                     const s = parseInt(state.selected.slice(2), 2);
@@ -164,8 +160,34 @@ export default function InfoContainer() {
                         <tr
                           onMouseOut={handleMouseOut}
                           onMouseOver={() => handleMouseOver("0b" + bin)}
+                          className={
+                            inRadius("0x" + x.toString(16)) ? "inradius" : ""
+                          }
+                          style={{
+                            fontSize:
+                              state.selected === "0b" + bin
+                                ? "xxx-large"
+                                : state.tooltip?.id === "0b" + bin
+                                ? "xx-large"
+                                : "medium",
+                            fontWeight:
+                              state.selected === "0b" + bin
+                                ? "bolder"
+                                : state.tooltip?.id === "0b" + bin
+                                ? "bold"
+                                : "normal",
+                            // marginTop:
+                            //   state.selected === "0b" + bin
+                            //     ? "8px"
+                            //     : state.tooltip?.id === "0b" + bin
+                            //     ? "8px"
+                            //     : "4px",
+                            // outline: inRadius("0x" + x.toString(16))
+                            //   ? "2px solid yellow"
+                            //   : "none",
+                          }}
                         >
-                          <th>{x}</th>
+                          <th style={{ textAlign: "center" }}>{x}</th>
                           <td
                             style={{
                               color: "white",
@@ -194,40 +216,25 @@ export default function InfoContainer() {
               </div>
             </tr>
           )}
-          {/* {nodeB && nodeB.id && (
-            <tr>
-              <th>Node_B:</th>
-              <td>
-                <tr>
-                  <th>binary:</th>
-                  <td>{nodeB.id}</td>
-                </tr>
-                <tr>
-                  <th>hex_id:</th>
-                  <td>
-                    {nodeB.id
-                      ? "0x" +
-                        padToEven(parseInt(nodeB.id.slice(2), 2).toString(16))
-                      : ""}
-                  </td>
-                </tr>
-              </td>
-            </tr>
-          )}
-
-          {nodeB && nodeB.id && (
-            <tr>
-              <th>Distance:</th>
-              <td>
-                {parseInt(nodeB.id.slice(2), 2) ^
-                  parseInt(state.selected.slice(2), 2)}
-              </td>
-            </tr>
-          )} */}
-
+          <tr>
+          </tr>
           {/* Add more rows as needed */}
         </tbody>
       </table>
+            <Button
+            fullWidth
+              variant="contained"
+              disabled={state.depth < 3}
+              color={state.heatVisible ? "primary" : "error"}
+              onClick={toggleHeatMap}
+              style={{
+                fontSize:'x-large'
+              }}
+            >
+              {state.heatVisible ? "Hide" : "Show"} HeatMap 
+            </Button>
     </div>
+    //   )}
+    // </div>
   );
 }
