@@ -1,9 +1,8 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import Button from "@mui/material/Button";
 import { Remove, Add } from "@mui/icons-material";
 import { Typography } from "@mui/material";
-import * as d3 from "d3";
 export default function DepthButton({ inc }: { inc: boolean }) {
   const { state, dispatch } = useContext(BinaryTreeContext);
   const handleClick = () => {
@@ -25,22 +24,15 @@ export default function DepthButton({ inc }: { inc: boolean }) {
 
 export function ChangeDepth() {
   const { state } = useContext(BinaryTreeContext);
-  const [width, setWidth] = useState<number>((window.innerWidth * 2) / 3);
-
-  useEffect(() => {
-    setWidth((window.innerWidth * 2) / 3);
-  }, [state.center]);
 
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
-        width: '33%',
+        width: "33%",
         justifyContent: "center",
         alignItems: "center",
-        // position: "fixed",
-        // bottom: 0,
       }}
     >
       <DepthButton inc={false} />
@@ -49,8 +41,8 @@ export function ChangeDepth() {
         fontSize={"x-large"}
         fontWeight={"bold"}
         style={{ color: "yellow" }}
-        height={'40px'}
-        justifyContent={'space-around'}
+        height={"40px"}
+        justifyContent={"space-around"}
       >
         Depth:{state.depth - 1}
       </Typography>

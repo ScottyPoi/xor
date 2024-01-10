@@ -13,7 +13,6 @@ import { CloseVisualizer } from "./OpenVisualizer";
 const BinaryTreeVisualization: React.FC = () => {
   const { state, dispatch } = React.useContext(BinaryTreeContext);
   const svgRef = useRef<SVGSVGElement | null>(null);
-  const [width, setWidth] = React.useState(0); // Use our custom hook
   const toggleBinaryNodes = () => {
     dispatch({
       type: state.binaryNodesVisible
@@ -63,7 +62,6 @@ const BinaryTreeVisualization: React.FC = () => {
         type: ActionTypes.SetCenter,
         payload: center,
       });
-      setWidth(window.innerWidth);
     }
   }, [dispatch]);
   useEffect(() => {

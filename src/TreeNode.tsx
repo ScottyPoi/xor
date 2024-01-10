@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
 import { ITreeNode } from "./types";
-import { calculateDistance } from "./HeatMap";
+import { calculateDistance } from "./treeUtils";
 
 export interface TreeNodeProps {
   treeNode: d3.HierarchyNode<ITreeNode>;
