@@ -8,6 +8,7 @@ import { ChangeRadius } from "./RadiusButtons";
 import { SwipeLeftSharp, SwipeRightSharp } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { Home } from "./Home";
+import Links from "./Links";
 
 export default function Layout() {
   const { state, dispatch } = useContext(BinaryTreeContext);
@@ -74,6 +75,7 @@ export default function Layout() {
           </div>
         </>
       )}
+      <Links />
     </div>
   );
 }
