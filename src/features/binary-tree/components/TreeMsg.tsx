@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from "react";
-import { BinaryTreeContext } from "./BinaryTreeProvider";
+import { BinaryTreeContext } from "../context/BinaryTreeProvider";
 import Carousel from "react-material-ui-carousel";
 import CarouselControls from "./CarouselControls";
 export default function TreeMsg() {

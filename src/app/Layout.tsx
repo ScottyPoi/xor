@@ -1,14 +1,14 @@
 import { useContext } from "react";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
-import BinaryTreeVisualization from "./BinaryTreeVisualization";
-import { ChangeDepth } from "./DepthButtons";
-import InfoContainer from "./InfoContainer";
-import TreeMsg from "./TreeMsg";
-import { ChangeRadius } from "./RadiusButtons";
+import { ActionTypes, BinaryTreeContext } from "../features/binary-tree/context/BinaryTreeProvider";
+import BinaryTreeVisualization from "../features/binary-tree/components/BinaryTreeVisualization";
+import { ChangeDepth } from "../features/binary-tree/components/DepthButtons";
+import InfoContainer from "../features/binary-tree/components/InfoContainer";
+import TreeMsg from "../features/binary-tree/components/TreeMsg";
+import { ChangeRadius } from "../features/binary-tree/components/RadiusButtons";
 import { SwipeLeftSharp, SwipeRightSharp } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { Home } from "./Home";
-import Links from "./Links";
+import { Home } from "../features/binary-tree/components/Home";
+import Links from "../components/Links";
 
 export default function Layout() {
   const { state, dispatch } = useContext(BinaryTreeContext);

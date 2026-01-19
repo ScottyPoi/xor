@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 import Button from "@mui/material/Button";
 import { ArrowBack, Home } from "@mui/icons-material";
 

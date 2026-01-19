@@ -6,8 +6,8 @@ import {
   Slideshow,
 } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { BinaryTreeContext } from "./BinaryTreeProvider";
-import { CarouselProps } from "./types";
+import { BinaryTreeContext } from "../context/BinaryTreeProvider";
+import { CarouselProps } from "../types";
 
 export default function CarouselControls({
   isPlaying,

@@ -2,8 +2,8 @@ import { Box, Button, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import OpenVisualizer from "./OpenVisualizer";
-import { padToEven } from "./treeUtils";
-import { XOR1, XOR, BIN } from "./words";
+import { padToEven } from "../utils/treeUtils";
+import { XOR1, XOR, BIN } from "../data/words";
 
 export function Home() {
     const [a, setA] = useState("");
