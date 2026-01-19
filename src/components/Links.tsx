@@ -1,42 +1,50 @@
-import Link from "@mui/material/Link";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import BugReportIcon from "@mui/icons-material/BugReport";
-import { Box } from "@mui/system";
-
-const linksStyle = {
-  position: "fixed",
-  right: "20px",
-  bottom: "20px",
-  maxWidth: "200px",
-  maxHeight: "100px",
-  backgroundColor: "white",
-  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.25)",
-  padding: "10px",
-  borderRadius: "10px",
-  opacity: "0.5",
-};
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 const Links = () => {
   return (
-    <Box
-      sx={linksStyle}
+    <Paper
+      elevation={6}
+      sx={{
+        position: "fixed",
+        right: 20,
+        bottom: 20,
+        maxWidth: 240,
+        p: 1.5,
+        borderRadius: 2,
+        opacity: 0.75,
+        bgcolor: "background.paper",
+      }}
     >
-      <Link
-        href="https://github.com/scottypoi/xor"
-        target="_blank"
-        rel="noopener"
-      >
-        <GitHubIcon /> Project Repository
-      </Link>
-      <br />
-      <Link
-        href="https://github.com/scottypoi/xor/issues"
-        target="_blank"
-        rel="noopener"
-      >
-        <BugReportIcon /> Report Issues
-      </Link>
-    </Box>
+      <Stack spacing={1}>
+        <Link
+          href="https://github.com/scottypoi/xor"
+          target="_blank"
+          rel="noopener"
+          underline="hover"
+          color="text.primary"
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <GitHubIcon fontSize="small" />
+          <Typography variant="body2">Project Repository</Typography>
+        </Link>
+        <Link
+          href="https://github.com/scottypoi/xor/issues"
+          target="_blank"
+          rel="noopener"
+          underline="hover"
+          color="text.primary"
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <BugReportIcon fontSize="small" />
+          <Typography variant="body2">Report Issues</Typography>
+        </Link>
+      </Stack>
+    </Paper>
   );
 };
 
