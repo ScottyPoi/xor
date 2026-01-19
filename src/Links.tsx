@@ -1,4 +1,4 @@
-import Link from "@mui/material/Link/Link";
+import Link from "@mui/material/Link";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { Box } from "@mui/system";
