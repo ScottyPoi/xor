@@ -72,24 +72,22 @@ export function Home() {
     return (
       <div className="homescreen">
         <Box
-          display="flex"
-          flexDirection={"column"}
-          justifyContent="center"
-          alignItems={"center"}
-          // width={showText ? "40%" : showBin ? "10%" : "25%"}
-          width={"30%"}
-          padding={4}
-          fontSize={"x-large"}
-          fontFamily={"monospace"}
-          color={"white"}
-          textAlign={"left"}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "30%",
+            p: 4,
+            fontSize: "x-large",
+            fontFamily: "monospace",
+            color: "text.primary",
+            textAlign: "left",
+          }}
         >
           {!showText ? (
             <Button
-              style={{
-                fontSize: "xxx-large",
-                fontFamily: "monospace",
-              }}
+              sx={{ fontSize: "xxx-large", fontFamily: "monospace" }}
               onMouseOver={() => setShowText(true)}
             >
               What Is XOR?
@@ -102,62 +100,71 @@ export function Home() {
           )}
         </Box>
         <Box
-          display={"flex"}
-          flexDirection={"column"}
-          width={"40%"}
-          justifyContent={"center"}
-          alignItems={"center"}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "40%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <Typography
-            display={"flex"}
-            fontWeight={"bolder"}
-            color="CaptionText"
-            variant={"h1"}
-            fontFamily={"monospace"}
+            sx={{
+              display: "flex",
+              fontWeight: "bolder",
+              color: "text.primary",
+              fontFamily: "monospace",
+            }}
+            variant="h1"
           >
             XOR
           </Typography>
           <Typography
-            display={"flex"}
-            fontWeight={"bolder"}
-            color="CaptionText"
-            variant={"h3"}
-            fontFamily={"monospace"}
+            sx={{
+              display: "flex",
+              fontWeight: "bolder",
+              color: "text.secondary",
+              fontFamily: "monospace",
+            }}
+            variant="h3"
           >
             Distance Metric for Kademlia
           </Typography>
           <Typography
-            display={"flex"}
-            fontWeight={"bolder"}
-            color="CaptionText"
-            variant={"h2"}
             id="animated-a"
-            fontFamily={"monospace"}
+            variant="h2"
+            sx={{
+              display: "flex",
+              fontWeight: "bolder",
+              color: "text.secondary",
+              fontFamily: "monospace",
+            }}
           >
             {a}
           </Typography>
           <Typography
-            display={"flex"}
-            fontWeight={"bolder"}
-            color="CaptionText"
-            variant={"h2"}
-            borderBottom={"solid 5px CaptionText"}
             id="animated-b"
-            fontFamily={"monospace"}
+            variant="h2"
+            sx={{
+              display: "flex",
+              fontWeight: "bolder",
+              color: "text.secondary",
+              borderBottom: "solid 5px",
+              borderColor: "text.secondary",
+              fontFamily: "monospace",
+            }}
           >
             {b}
           </Typography>
           <Typography
-            display={"flex"}
-            fontWeight={"bolder"}
-            variant={"h2"}
             id="animated-c"
-            fontFamily={"monospace"}
+            variant="h2"
+            sx={{ display: "flex", fontWeight: "bolder", fontFamily: "monospace" }}
           >
             {c}
           </Typography>
-          <div
-            style={{
+          <Box
+            sx={{
               position: "fixed",
               bottom: "15%",
               display: "flex",
@@ -165,28 +172,31 @@ export function Home() {
             }}
           >
             <OpenVisualizer />
-          </div>
+          </Box>
         </Box>
         <Box
-          display="flex"
-          flexDirection={"column"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          // width={showBin ? "40%" : showText ? "10%" : "25%"}
-          width={"30%"}
-          padding={4}
-          fontSize={"x-large"}
-          color={"white"}
-          textAlign={"center"}
-          height={"100%"}
-          fontFamily={"monospace"}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "30%",
+            p: 4,
+            fontSize: "x-large",
+            color: "text.primary",
+            textAlign: "center",
+            height: "100%",
+            fontFamily: "monospace",
+          }}
         >
           {showBin ? (
             <Box
-              top={16}
-              overflow={"auto"}
-              padding={4}
-              maxHeight={"85%"}
+              sx={{
+                top: 16,
+                overflow: "auto",
+                p: 4,
+                maxHeight: "85%",
+              }}
               onMouseLeave={() => setShowBin(false)}
             >
               <ReactMarkdown>{BIN}</ReactMarkdown>
@@ -196,10 +206,7 @@ export function Home() {
               onMouseOver={() => setShowBin(true)}
               variant="outlined"
               size="large"
-              style={{
-                fontSize: "xxx-large",
-                fontFamily: "monospace",
-              }}
+              sx={{ fontSize: "xxx-large", fontFamily: "monospace" }}
             >
               XOR distance &<br />
               Binary Trees
