@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
-import { ITreeNode, NodeLinkProps, TreeNodeProps } from "./types";
-import { calculateDistance } from "./treeUtils";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
+import { ITreeNode, NodeLinkProps, TreeNodeProps } from "../types";
+import { calculateDistance } from "../utils/treeUtils";
 
 const TreeNode = ({ treeNode }: TreeNodeProps) => {
   const { state, dispatch } = useContext(BinaryTreeContext);

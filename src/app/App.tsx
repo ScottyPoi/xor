@@ -1,8 +1,6 @@
 import "./App.css";
-import ErrorBoundary from "./ErrorBoundary";
-import BinaryTreeProvider from "./BinaryTreeProvider";
-import "./BinaryTreeVisualization.css";
-
+import ErrorBoundary from "../components/ErrorBoundary";
+import BinaryTreeProvider from "../features/binary-tree/context/BinaryTreeProvider";
 import Layout from "./Layout";
 
 function App() {

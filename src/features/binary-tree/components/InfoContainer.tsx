@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { fillColorByDistance, padToEven } from "./treeUtils";
+import { fillColorByDistance, padToEven } from "../utils/treeUtils";
 import * as d3 from "d3";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 import Button from "@mui/material/Button";
-import { SwatchesProps } from "./types";
+import { SwatchesProps } from "../types";
 
 export default function InfoContainer() {
   const { state, dispatch } = useContext(BinaryTreeContext);

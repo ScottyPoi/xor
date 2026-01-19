@@ -1,12 +1,12 @@
 // filename: BinaryTreeVisualization.tsx
 import React, { useRef, useMemo, useEffect, useCallback } from "react";
 import * as d3 from "d3";
-import "./BinaryTreeVisualization.css";
-import { generateTreeData } from "./treeUtils";
-import { ITreeNode } from "./types";
+import "../styles/BinaryTreeVisualization.css";
+import { generateTreeData } from "../utils/treeUtils";
+import { ITreeNode } from "../types";
 import TreeNode, { HexaryLink, HexaryLink2, NodeLink } from "./TreeNode";
 import HeatMap from "./HeatMap";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 import { Button } from "@mui/material";
 import { CloseVisualizer } from "./OpenVisualizer";
 

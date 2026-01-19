@@ -1,8 +1,8 @@
 import * as d3 from "d3";
-import { HeatMapProps } from "./types";
+import { HeatMapProps } from "../types";
 import { useContext } from "react";
-import { BinaryTreeContext } from "./BinaryTreeProvider";
-import { calculateDistance, getLeafAngles } from "./treeUtils";
+import { BinaryTreeContext } from "../context/BinaryTreeProvider";
+import { calculateDistance, getLeafAngles } from "../utils/treeUtils";
 import LeafHeat from "./LeafHeat";
 
 export default function HeatMap({ nodes }: HeatMapProps) {

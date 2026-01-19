@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 
 export default function Header() {
   const { state, dispatch } = useContext(BinaryTreeContext);

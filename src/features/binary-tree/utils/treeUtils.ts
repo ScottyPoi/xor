@@ -1,6 +1,6 @@
 // treeUtils.ts
 
-import { ITreeNode, TextAngleParams } from "./types";
+import { ITreeNode, TextAngleParams } from "../types";
 
 
 export const generateTreeData = (

@@ -1,12 +1,12 @@
 import * as d3 from "d3";
-import { ILeafHeatProps } from "./types";
+import { ILeafHeatProps } from "../types";
 import { useContext } from "react";
-import { ActionTypes, BinaryTreeContext } from "./BinaryTreeProvider";
+import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 import {
   fillColorByDistance,
   fillColorById,
   textStartAngle,
-} from "./treeUtils";
+} from "../utils/treeUtils";
 
 export default function LeafHeat({
   nodeData,
