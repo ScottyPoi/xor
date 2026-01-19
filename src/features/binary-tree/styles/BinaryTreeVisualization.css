@@ -134,8 +134,8 @@ width: 100%;
   position: fixed;
   top: 0;
   right: 0;
-  display: "flex";
-  flex-direction: "row";
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   margin-inline: 10px;
   margin-top: 5px;
@@ -154,7 +154,7 @@ width: 100%;
   color: yellow;
   opacity: 1;
   font-family: "monospace";
-  margin: 4;
+  margin: 4px;
   border: 1px solid black;
 
 }
@@ -171,14 +171,14 @@ width: 100%;
 
 .distanceselected {
   font-weight: bolder;
-  font-size: 'xxx-large';
+  font-size: xxx-large;
   margin-top: 8px;
 }
 
 .distancehovered {
   font-weight: bold;
-  font-size: 'xx-large';
-  margin-top: 8px
+  font-size: xx-large;
+  margin-top: 8px;
 }
 
 .inradius {
