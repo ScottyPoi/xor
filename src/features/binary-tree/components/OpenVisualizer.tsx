@@ -14,10 +14,10 @@ const OpenVisualizer: React.FC = () => {
     <Button
       size="large"
       variant="contained"
-      style={{
-        opacity: "0.4",
+      sx={{
+        opacity: 0.4,
         fontSize: "xx-large",
-        outlineWidth: "4px",
+        outlineWidth: 4,
       }}
       onClick={open}
     >
@@ -36,17 +36,18 @@ export const CloseVisualizer: React.FC = () => {
   return (
     <Button
       variant="contained"
-      style={{
-        opacity: "0.4",
+      sx={{
+        opacity: 0.4,
         fontSize: "xx-large",
         fontFamily: "monospace",
-        outlineWidth: "4px",
+        outlineWidth: 4,
       }}
-      
       onClick={close}
-      startIcon={<ArrowBack/>}
+      startIcon={<ArrowBack />}
       endIcon={<Home />}
-    >Home</Button>
+    >
+      Home
+    </Button>
   );
 };
 

@@ -34,9 +34,11 @@ export default function Layout() {
           </div>
           <div className="tree-msg">
             <Box
-              display={"flex"}
-              style={{ width: "100%" }}
-              justifyContent={"space-between"}
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+              }}
             >
               <Button
                 variant="contained"
@@ -59,20 +61,20 @@ export default function Layout() {
             </Box>
             <TreeMsg />
           </div>
-          <div
-            style={{
+          <Box
+            sx={{
               width: "100%",
               alignItems: "center",
-
               display: "flex",
               flexDirection: "column",
               position: "fixed",
               bottom: 15,
+              gap: 1,
             }}
           >
             <ChangeDepth />
             {state.depth > 2 && <ChangeRadius />}
-          </div>
+          </Box>
         </>
       )}
       <Links />

@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { Remove, Add } from "@mui/icons-material";
-import { Typography } from "@mui/material";
 export default function DepthButton({ inc }: { inc: boolean }) {
   const { state, dispatch } = useContext(BinaryTreeContext);
   const handleClick = () => {
@@ -14,7 +15,7 @@ export default function DepthButton({ inc }: { inc: boolean }) {
   return (
     <Button
       variant="contained"
-      style={{ height: "40px", paddingInline: 10 }}
+      sx={{ height: 40, px: 1.25 }}
       disabled={disabled}
       onClick={handleClick}
       startIcon={<Icon />}
@@ -26,27 +27,29 @@ export function ChangeDepth() {
   const { state } = useContext(BinaryTreeContext);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        width: "33%",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+    <Stack
+      direction="row"
+      spacing={1}
+      alignItems="center"
+      justifyContent="center"
+      sx={{ width: "33%" }}
     >
       <DepthButton inc={false} />
       <Typography
-        padding={2}
-        fontSize={"x-large"}
-        fontWeight={"bold"}
-        style={{ color: "yellow" }}
-        height={"40px"}
-        justifyContent={"space-around"}
+        sx={{
+          px: 2,
+          fontSize: "x-large",
+          fontWeight: "bold",
+          color: "warning.main",
+          height: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
       >
         Depth:{state.depth - 1}
       </Typography>
       <DepthButton inc />
-    </div>
+    </Stack>
   );
 }

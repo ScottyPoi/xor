@@ -7,7 +7,7 @@ import {
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
-import { Slider, Typography } from "@mui/material";
+import { Slider, Stack, Typography } from "@mui/material";
 export default function RadiusButton({ inc }: { inc: boolean }) {
   const { state, dispatch } = useContext(BinaryTreeContext);
   const handleClick = () => {
@@ -20,7 +20,7 @@ export default function RadiusButton({ inc }: { inc: boolean }) {
   return (
     <Button
       variant="contained"
-      style={{ height: "40px", margin: "10px" }}
+      sx={{ height: 40, m: 1 }}
       disabled={disabled}
       onClick={handleClick}
       startIcon={startIcon}
@@ -43,7 +43,7 @@ export function RadiusNButton({ inc }: { inc: boolean }) {
   return (
     <Button
       variant="contained"
-      style={{ height: "40px", margin: "10px" }}
+      sx={{ height: 40, m: 1 }}
       disabled={disabled}
       onClick={handleClick}
       startIcon={<Icon />}
@@ -68,55 +68,46 @@ export function ChangeRadius() {
         max={2 ** (state.depth - 1) - 1}
         value={Number(state.radiusN)}
         onChange={(_, n, __) => setRadiusN(n)}
-        style={{
-          color: "yellow",
-        }}
+        sx={{ color: "warning.main" }}
       />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          // width: width,
-          justifyContent: "center",
-          alignItems: "center",
-          // position: "fixed",
-          // bottom: 0,
-        }}
-      >
+      <Stack direction="row" alignItems="center" justifyContent="center">
         <RadiusNButton inc={false} />
         <RadiusButton inc={false} />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "40px",
+        <Stack
+          direction="column"
+          sx={{
+            height: 40,
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-        <Typography
-          fontSize={"x-large"}
-          fontWeight={"bold"}
-          style={{ color: "yellow" }}
-          height={"50%"}
-          paddingBottom={1}
-        >
-          Radius: 2^{state.radius}
-          {2n ** BigInt(state.radius) - state.radiusN - 1n > 0n &&
-            " -" + (2n ** BigInt(state.radius) - state.radiusN - 1n).toString()}
-        </Typography>
-        <Typography
-          fontSize={"x-large"}
-          fontWeight={"bold"}
-          style={{ color: "yellow" }}
-          height={"50%"}
-        >
-          Distance {"<"} {(state.radiusN + 1n).toString()}
-        </Typography>
-        </div>
+          <Typography
+            sx={{
+              fontSize: "x-large",
+              fontWeight: "bold",
+              color: "warning.main",
+              height: "50%",
+              pb: 1,
+            }}
+          >
+            Radius: 2^{state.radius}
+            {2n ** BigInt(state.radius) - state.radiusN - 1n > 0n &&
+              " -" + (2n ** BigInt(state.radius) - state.radiusN - 1n).toString()}
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "x-large",
+              fontWeight: "bold",
+              color: "warning.main",
+              height: "50%",
+            }}
+          >
+            Distance {"<"} {(state.radiusN + 1n).toString()}
+          </Typography>
+        </Stack>
         <RadiusButton inc />
         <RadiusNButton inc />
-      </div>
+      </Stack>
     </div>
   );
 }

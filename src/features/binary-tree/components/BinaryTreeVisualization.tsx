@@ -7,7 +7,7 @@ import { ITreeNode } from "../types";
 import TreeNode, { HexaryLink, HexaryLink2, NodeLink } from "./TreeNode";
 import HeatMap from "./HeatMap";
 import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
-import { Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { CloseVisualizer } from "./OpenVisualizer";
 
 const BinaryTreeVisualization: React.FC = () => {
@@ -186,40 +186,40 @@ const BinaryTreeVisualization: React.FC = () => {
       }}
     >
       {" "}
-      <div
-        style={{
+      <Box
+        sx={{
           position: "fixed",
           bottom: 0,
-          display: "flex",
-          flexDirection: "column",
-          height: "min-content",
           zIndex: 1000,
+          p: 1,
         }}
       >
-        <Button
-          variant="contained"
-          color={state.hexaryLinksVisible ? "primary" : "error"}
-          onClick={toggleHexaryLinks}
-          disabled={state.depth < 5}
-        >
-          {state.hexaryLinksVisible ? "Hide" : "Show"} Hexary Links
-        </Button>
-        <Button
-          variant="contained"
-          onClick={toggleBinaryLinks}
-          color={state.binaryLinksVisible ? "primary" : "error"}
-        >
-          {state.binaryLinksVisible ? "Hide" : "Show"} Binary Links
-        </Button>
-        <Button
-          variant="contained"
-          onClick={toggleBinaryNodes}
-          color={state.binaryNodesVisible ? "primary" : "error"}
-        >
-          {state.binaryNodesVisible ? "Hide" : "Show"} Binary Nodes
-        </Button>
-        <CloseVisualizer />
-      </div>
+        <Stack spacing={1}>
+          <Button
+            variant="contained"
+            color={state.hexaryLinksVisible ? "primary" : "error"}
+            onClick={toggleHexaryLinks}
+            disabled={state.depth < 5}
+          >
+            {state.hexaryLinksVisible ? "Hide" : "Show"} Hexary Links
+          </Button>
+          <Button
+            variant="contained"
+            onClick={toggleBinaryLinks}
+            color={state.binaryLinksVisible ? "primary" : "error"}
+          >
+            {state.binaryLinksVisible ? "Hide" : "Show"} Binary Links
+          </Button>
+          <Button
+            variant="contained"
+            onClick={toggleBinaryNodes}
+            color={state.binaryNodesVisible ? "primary" : "error"}
+          >
+            {state.binaryNodesVisible ? "Hide" : "Show"} Binary Nodes
+          </Button>
+          <CloseVisualizer />
+        </Stack>
+      </Box>
       {/* <div>
         <button onClick={toggleLeftVisibility}>
           {leftVisible ? "Hide" : "Show Controls"}
