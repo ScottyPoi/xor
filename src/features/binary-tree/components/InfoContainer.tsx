@@ -2,7 +2,9 @@ import { useContext } from "react";
 import { fillColorByDistance, padToEven } from "../utils/treeUtils";
 import * as d3 from "d3";
 import { ActionTypes, BinaryTreeContext } from "../context/BinaryTreeProvider";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 import { SwatchesProps } from "../types";
 
 export default function InfoContainer() {
@@ -23,20 +25,20 @@ export default function InfoContainer() {
         });
   };
   return (
-    <div className="info-container">
+    <Paper
+      className="info-container"
+      elevation={6}
+      sx={{ bgcolor: "background.paper", p: 1 }}
+    >
       <table>
         <tbody>
-          <tr
-            style={{
-              color: "white",
-              fontWeight: "bolder",
-              fontSize: "large",
-            }}
-          >
+          <tr>
             <th
               style={{
                 color: "white",
                 background: state.selected.endsWith("1") ? "blue" : "green",
+                fontWeight: "bolder",
+                fontSize: "large",
               }}
             >
               Selected:
@@ -59,11 +61,11 @@ export default function InfoContainer() {
           </tr>
           {state.selected && (
             <tr>
-              <div style={{ maxHeight: "40vh", overflow: "auto" }}>
-                <td>
+              <td>
+                <Box sx={{ maxHeight: "40vh", overflow: "auto" }}>
                   <Swatches count={swatches} colorScale={colorScale} />
-                </td>
-              </div>
+                </Box>
+              </td>
             </tr>
           )}
           <tr></tr>
@@ -75,13 +77,11 @@ export default function InfoContainer() {
         disabled={state.depth < 3}
         color={state.heatVisible ? "primary" : "error"}
         onClick={toggleHeatMap}
-        style={{
-          fontSize: "x-large",
-        }}
+        sx={{ fontSize: "x-large" }}
       >
         {state.heatVisible ? "Hide" : "Show"} HeatMap
       </Button>
-    </div>
+    </Paper>
   );
 }
 
