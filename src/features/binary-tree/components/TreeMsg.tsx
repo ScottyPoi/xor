@@ -1,4 +1,7 @@
 import { useContext, useMemo, useState } from "react";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import { BinaryTreeContext } from "../context/BinaryTreeProvider";
 import Carousel from "react-material-ui-carousel";
 import CarouselControls from "./CarouselControls";
@@ -80,28 +83,42 @@ export default function TreeMsg() {
   }, [depthMessages, distanceMsg, leafMsg, networkMsg, state.depth, treeMsg]);
 
   return (
-    <div>
-      <CarouselControls
-        isShown={show}
-        toggleShown={() => {
-          setShow(!show);
-        }}
-        isPlaying={play}
-        togglePlaying={() => {
-          setPlay(!play);
-        }}
-      />
-      {show && (
-        <Carousel autoPlay={play}>
-          {message.map((m, i) => {
-            return (
-              <div key={i} className="msg-line">
-                {m}
-              </div>
-            );
-          })}
-        </Carousel>
-      )}
-    </div>
+    <Paper
+      elevation={6}
+      sx={{
+        p: 1,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+      }}
+    >
+      <Stack spacing={1}>
+        <CarouselControls
+          isShown={show}
+          toggleShown={() => {
+            setShow(!show);
+          }}
+          isPlaying={play}
+          togglePlaying={() => {
+            setPlay(!play);
+          }}
+        />
+        {show && (
+          <Carousel autoPlay={play}>
+            {message.map((m, i) => {
+              return (
+                <Typography
+                  key={i}
+                  className="msg-line"
+                  variant="body1"
+                  sx={{ color: "warning.main" }}
+                >
+                  {m}
+                </Typography>
+              );
+            })}
+          </Carousel>
+        )}
+      </Stack>
+    </Paper>
   );
 }
